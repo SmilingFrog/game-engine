@@ -13,11 +13,6 @@ public class GameTest {
 	}
 	
 	@Test
-	public void cantCreateGameWithNew(){
-		//Game game = new Game();
-	}
-	
-	@Test
 	public void canCreateGameWithBuilder(){
 		GameBuilder builder = Game.getGameBuilder();
 		Game game = builder.build();
