@@ -1,5 +1,7 @@
 package game.game;
 
+import java.util.List;
+
 public interface GameData {
 
 
@@ -14,5 +16,9 @@ public interface GameData {
 	String getStatus();
 
 	void addPlayer(PlayerData playerData);
+
+	List<PlayerData> getPlayerDataList();
+
+	int getPlayersNumber();
 
 }

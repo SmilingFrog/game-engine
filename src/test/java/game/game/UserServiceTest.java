@@ -12,22 +12,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
-	@Mock
 	UserService service;
-	@Mock
-	GameData mockedGameStatus;
 	
 	GameData gameData;
 
 	@Before
 	public void setup(){
+		service = new UserServiceImpl();
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createPlayers(gameData);
-		
-		doReturn("1").when(mockedGameStatus).getId();
-		doReturn("PLAYING").when(mockedGameStatus).getStatus();
-		doReturn(mockedGameStatus).when(service).createGame(gameData);
 	}
 	
 	@Test
@@ -37,7 +31,6 @@ public class UserServiceTest {
 		GameData expectedGameData = prepareExpectedData();
 		assertTrue(isequal(gameStatus, expectedGameData));
 	}
-	
 	
 
 	private GameData prepareExpectedData() {

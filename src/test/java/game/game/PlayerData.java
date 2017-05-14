@@ -8,4 +8,10 @@ public interface PlayerData {
 
 	void setIntelect(String intelect);
 
+	String getPlayerName();
+
+	PlayerType getPlayerType();
+
+	String getIntelect();
+
 }

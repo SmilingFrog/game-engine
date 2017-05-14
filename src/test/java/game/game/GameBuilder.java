@@ -6,4 +6,10 @@ public interface GameBuilder {
 
 	String getId();
 
+	void add(Player player);
+
+	void setPlayersNumber(int playersNumber);
+
+	boolean allPlayersReady();
+
 }
