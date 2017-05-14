@@ -12,6 +12,11 @@ public class Game {
 		public Game build() {
 			return new Game();
 		}
+
+		@Override
+		public String getId() {
+			return "1";
+		}
 		
 	}
 	

@@ -4,4 +4,6 @@ public interface GameBuilder {
 	
 	Game build();
 
+	String getId();
+
 }
