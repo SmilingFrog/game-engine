@@ -1,24 +1,50 @@
 package game.game;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
-	@Test
-	public void whenAllPlayersAreSetInGameDataReturnNewGameStatus() {
-		UserService service = new UserServiceImpl();
-		GameData gameData = new GameDataImpl();
+	@Mock
+	UserService service;
+	@Mock
+	GameData mockedGameStatus;
+	
+	GameData gameData;
+
+	@Before
+	public void setup(){
+		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createPlayers(gameData);
 		
+		doReturn("1").when(mockedGameStatus).getId();
+		doReturn("PLAYING").when(mockedGameStatus).getStatus();
+		doReturn(mockedGameStatus).when(service).createGame(gameData);
+	}
+	
+	@Test
+	public void whenAllPlayersAreSetInGameDataReturnNewGameStatus() {
+		
 		GameData gameStatus = service.createGame(gameData);
+		GameData expectedGameData = prepareExpectedData();
+		assertTrue(isequal(gameStatus, expectedGameData));
+	}
+	
+	
+
+	private GameData prepareExpectedData() {
 		GameData expectedGameData = new GameDataImpl();
 		expectedGameData.setId("1");
 		expectedGameData.setStatus("PLAYING");
-		
-		assertTrue(isequal(gameStatus, expectedGameData));
+		return expectedGameData;
 	}
 
 	private void createPlayers(GameData gameData) {
