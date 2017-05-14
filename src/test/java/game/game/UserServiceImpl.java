@@ -4,11 +4,15 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-	GameRepository acactiveGamesRepository;
-	GameBuilderRepository activeGameBuilderRepositories;
+	GameRepository activeGamesRepository;
+	GameBuilderRepository activeGameBuilderRepository;
 	
 	public void setAcactiveGamesRepository(GameRepository repo){
-		this.acactiveGamesRepository = repo;
+		this.activeGamesRepository = repo;
+	}
+	
+	public void setActiveGameBuilderRepository(GameBuilderRepository repo){
+		this.activeGameBuilderRepository = repo;
 	}
 	
 	@Override
@@ -23,10 +27,12 @@ public class UserServiceImpl implements UserService {
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		if(gameBuilder.allPlayersReady()){
 			Game game = gameBuilder.build();
-			acactiveGamesRepository.add(game);
+			activeGamesRepository.add(game);
+			result = game.getGameData();
+		}else{
+			activeGameBuilderRepository.add(gameBuilder);
+			result = gameBuilder.getGameData();
 		}
-		
-		
 		
 		return result;
 	}

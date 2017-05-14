@@ -10,11 +10,6 @@ public class GameBuilderRepositoryImpl implements GameBuilderRepository {
 	public GameBuilderRepositoryImpl() {
 		repo = new HashMap<>();
 	}
-	
-	@Override
-	public void save(GameBuilder builder) {
-		repo.put(builder.getId(), builder);
-	}
 
 	@Override
 	public int size() {
@@ -23,6 +18,17 @@ public class GameBuilderRepositoryImpl implements GameBuilderRepository {
 
 	@Override
 	public GameBuilder getById(String id) {
+		return repo.get(id);
+	}
+
+	@Override
+	public void add(GameBuilder gameBuilder) {
+		repo.put(gameBuilder.getId(), gameBuilder);
+		
+	}
+
+	@Override
+	public GameBuilder findById(String id) {
 		return repo.get(id);
 	}
 

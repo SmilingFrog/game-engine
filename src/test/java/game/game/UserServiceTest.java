@@ -15,21 +15,42 @@ public class UserServiceTest {
 	UserService service;
 	
 	GameData gameData;
+	
+	GameRepository gameRepository;
+	
+	GameBuilderRepository gameBuilderRepository;
 
 	@Before
 	public void setup(){
+		gameRepository = new GameRepositoryImpl();
+		gameBuilderRepository = new GameBuilderRepositoryImpl();
 		service = new UserServiceImpl();
+		service.setAcactiveGamesRepository(gameRepository);
+		service.setActiveGameBuilderRepository(gameBuilderRepository);
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
-		createPlayers(gameData);
+		createAllPlayers(gameData);
 	}
 	
 	@Test
-	public void whenAllPlayersAreSetInGameDataReturnNewGameStatus() {
+	public void whenAllPlayersAreSetInGameDataReturnNewGameStatusPlaying() {
 		
 		GameData gameStatus = service.createGame(gameData);
 		GameData expectedGameData = prepareExpectedData();
 		assertTrue(isequal(gameStatus, expectedGameData));
+		
+	}
+	
+	@Test
+	public void whenNotAllPlayersAreSetInGameDataReturnNewGameStatusBuilding() {
+		gameData = new GameDataImpl();
+		gameData.setPlayersNumber(2);
+		createNotAllPlayers(gameData);
+		GameData gameStatus = service.createGame(gameData);
+		GameData expectedGameData = prepareExpectedData();
+		expectedGameData.setStatus("BUILDING");
+		assertTrue(isequal(gameStatus, expectedGameData));
+		
 	}
 	
 
@@ -40,7 +61,7 @@ public class UserServiceTest {
 		return expectedGameData;
 	}
 
-	private void createPlayers(GameData gameData) {
+	private void createAllPlayers(GameData gameData) {
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerType(PlayerType.HUMAN);
 		playerData.setPlayerName("Tozik");
@@ -49,6 +70,15 @@ public class UserServiceTest {
 		playerData.setPlayerType(PlayerType.COMPUTER);
 		playerData.setPlayerName("ELECTRO BRAIN");
 		playerData.setIntelect("RANDOM");
+		gameData.addPlayer(playerData);
+	}
+	
+	private void createNotAllPlayers(GameData gameData) {
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerType(PlayerType.HUMAN);
+		playerData.setPlayerName("Tozik");
+		gameData.addPlayer(playerData);
+		
 	}
 
 	private boolean isequal(GameData gameStatus, GameData expectedGameData) {

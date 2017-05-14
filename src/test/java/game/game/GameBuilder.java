@@ -12,4 +12,6 @@ public interface GameBuilder {
 
 	boolean allPlayersReady();
 
+	GameData getGameData();
+
 }

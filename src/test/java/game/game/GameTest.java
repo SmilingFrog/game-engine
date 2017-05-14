@@ -35,7 +35,7 @@ public class GameTest {
 	public void saveBuilderInRepository(){
 		GameBuilderRepository repo = new GameBuilderRepositoryImpl();
 		assertEquals(0, repo.size());
-		repo.save(builder);
+		repo.add(builder);
 		assertEquals(1, repo.size());
 		assertEquals(repo.getById(builder.getId()), builder);
 	}

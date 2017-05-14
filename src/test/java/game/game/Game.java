@@ -8,6 +8,7 @@ public class Game {
 	List<Player> players;
 	int playersNumber;
 	String id;
+	String status;
 	
 	private Game(){
 	}
@@ -17,9 +18,13 @@ public class Game {
 		List<Player> players;
 		String id;
 		int playersNumber;
+		String status;
 		
 		public InnerGameBuilder() {
 			players = new ArrayList<>();
+			this.status = "BUILDING";
+			this.id = IdGeneratorImpl.generateId();
+			IdGeneratorImpl.reset();
 		}
 		
 		@Override
@@ -28,6 +33,8 @@ public class Game {
 			game.players = this.players;
 			game.playersNumber = this.playersNumber;
 			game.id = IdGeneratorImpl.generateId();
+			IdGeneratorImpl.reset();
+			game.status = "PLAYING";
 			return game;
 		}
 
@@ -50,11 +57,30 @@ public class Game {
 		public boolean allPlayersReady() {
 			return playersNumber == players.size();
 		}
+
+		@Override
+		public GameData getGameData() {
+			GameData gameData = new GameDataImpl();
+			gameData.setId(id);
+			gameData.setPlayersNumber(playersNumber);
+			gameData.setStatus(status);
+			return gameData;
+		}
 		
 	}
 	
 	public static GameBuilder getGameBuilder() {
 		return new InnerGameBuilder();
 	}
+
+	public GameData getGameData() {
+		GameData result = new GameDataImpl();
+		result.setId(id);
+		result.setPlayersNumber(playersNumber);
+		result.setStatus(status);
+		
+		return result;
+	}
+	
 
 }
