@@ -46,4 +46,21 @@ public class UserServiceImpl implements UserService {
 		return player;
 	}
 
+	@Override
+	public GameData registerNewPlayer(String id, PlayerData playerData) {
+		GameData result = null;
+		GameBuilder gameBuilder = activeGameBuilderRepository.findById(id);
+		Player player = createPlayer(playerData);
+		gameBuilder.add(player);
+		if(gameBuilder.allPlayersReady()){
+			Game game = gameBuilder.build();
+			activeGamesRepository.add(game);
+			result = game.getGameData();
+			activeGameBuilderRepository.remove(gameBuilder);
+		}else{
+			result = gameBuilder.getGameData();
+		}
+		return result;
+	}
+
 }

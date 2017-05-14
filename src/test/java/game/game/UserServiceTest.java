@@ -12,21 +12,26 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 
-	UserService service;
+	UserService userService;
 	
 	GameData gameData;
 	
 	GameRepository gameRepository;
 	
 	GameBuilderRepository gameBuilderRepository;
+	
+	PlayerService playerService;
 
 	@Before
 	public void setup(){
 		gameRepository = new GameRepositoryImpl();
 		gameBuilderRepository = new GameBuilderRepositoryImpl();
-		service = new UserServiceImpl();
-		service.setAcactiveGamesRepository(gameRepository);
-		service.setActiveGameBuilderRepository(gameBuilderRepository);
+		userService = new UserServiceImpl();
+		userService.setAcactiveGamesRepository(gameRepository);
+		userService.setActiveGameBuilderRepository(gameBuilderRepository);
+		playerService = new PlayerServiceImpl();
+		playerService.setAcactiveGamesRepository(gameRepository);
+		playerService.setActiveGameBuilderRepository(gameBuilderRepository);
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createAllPlayers(gameData);
@@ -35,7 +40,7 @@ public class UserServiceTest {
 	@Test
 	public void whenAllPlayersAreSetInGameDataReturnNewGameStatusPlaying() {
 		
-		GameData gameStatus = service.createGame(gameData);
+		GameData gameStatus = userService.createGame(gameData);
 		GameData expectedGameData = prepareExpectedData();
 		assertTrue(isequal(gameStatus, expectedGameData));
 		
@@ -46,11 +51,31 @@ public class UserServiceTest {
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createNotAllPlayers(gameData);
-		GameData gameStatus = service.createGame(gameData);
+		GameData gameStatus = userService.createGame(gameData);
 		GameData expectedGameData = prepareExpectedData();
 		expectedGameData.setStatus("BUILDING");
 		assertTrue(isequal(gameStatus, expectedGameData));
-		
+	}
+	
+	@Test
+	public void whenAddingAPlayerSoThatAllPlayersAreRegisteredReturnGameStatusPlaying() {
+		gameData = new GameDataImpl();
+		gameData.setPlayersNumber(2);
+		createNotAllPlayers(gameData);
+		GameData gameStatus = userService.createGame(gameData);
+		GameData expectedGameData = prepareExpectedData();
+		expectedGameData.setStatus("BUILDING");
+		assertTrue(isequal(gameStatus, expectedGameData));
+		String id = gameStatus.getId();
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerName("Vasya");
+		playerData.setPlayerType(PlayerType.HUMAN);
+		gameStatus = userService.registerNewPlayer(id, playerData);
+		assertEquals(gameStatus.getId(), "1");
+		assertEquals(gameStatus.getStatus(), "PLAYING");
+		gameStatus = playerService.getGameStatus(id);
+		assertEquals(gameStatus.getId(), "1");
+		assertEquals(gameStatus.getStatus(), "PLAYING");
 	}
 	
 

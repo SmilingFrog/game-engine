@@ -32,4 +32,9 @@ public class GameBuilderRepositoryImpl implements GameBuilderRepository {
 		return repo.get(id);
 	}
 
+	@Override
+	public void remove(GameBuilder gameBuilder) {
+		repo.remove(gameBuilder.getGameData().getId());
+	}
+
 }

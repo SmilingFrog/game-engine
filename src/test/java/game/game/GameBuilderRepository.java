@@ -10,4 +10,6 @@ public interface GameBuilderRepository {
 
 	GameBuilder findById(String id);
 
+	void remove(GameBuilder gameBuilder);
+
 }
