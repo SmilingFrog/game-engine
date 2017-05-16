@@ -50,6 +50,9 @@ public class UserServiceImpl implements UserService {
 	public GameData registerNewPlayer(String id, PlayerData playerData) {
 		GameData result = null;
 		GameBuilder gameBuilder = activeGameBuilderRepository.findById(id);
+		if(theGameHasAlreadyStarted(gameBuilder)){
+			throw new RuntimeException("Can not register new player. The Game has already started!");
+		}
 		Player player = createPlayer(playerData);
 		gameBuilder.add(player);
 		if(gameBuilder.allPlayersReady()){
@@ -62,5 +65,10 @@ public class UserServiceImpl implements UserService {
 		}
 		return result;
 	}
+
+	private boolean theGameHasAlreadyStarted(GameBuilder gameBuilder) {
+		return gameBuilder == null;
+	}
+
 
 }

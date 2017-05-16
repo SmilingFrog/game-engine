@@ -24,6 +24,10 @@ public class UserServiceTest {
 
 	@Before
 	public void setup(){
+		setDependencies();
+	}
+
+	public void setDependencies() {
 		gameRepository = new GameRepositoryImpl();
 		gameBuilderRepository = new GameBuilderRepositoryImpl();
 		userService = new UserServiceImpl();
@@ -32,14 +36,13 @@ public class UserServiceTest {
 		playerService = new PlayerServiceImpl();
 		playerService.setAcactiveGamesRepository(gameRepository);
 		playerService.setActiveGameBuilderRepository(gameBuilderRepository);
-		gameData = new GameDataImpl();
-		gameData.setPlayersNumber(2);
-		createAllPlayers(gameData);
 	}
 	
 	@Test
 	public void whenAllPlayersAreSetInGameDataReturnNewGameStatusPlaying() {
-		
+		gameData = new GameDataImpl();
+		gameData.setPlayersNumber(2);
+		createAllPlayers(gameData);
 		GameData gameStatus = userService.createGame(gameData);
 		GameData expectedGameData = prepareExpectedData();
 		assertTrue(isequal(gameStatus, expectedGameData));
@@ -76,6 +79,19 @@ public class UserServiceTest {
 		gameStatus = playerService.getGameStatus(id);
 		assertEquals(gameStatus.getId(), "1");
 		assertEquals(gameStatus.getStatus(), "PLAYING");
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void whenTryingToRegisterNewUserToTheGameThatHasAlreadyStartedThrowException(){
+		gameData = new GameDataImpl();
+		gameData.setPlayersNumber(2);
+		createAllPlayers(gameData);
+		GameData gameStatus = userService.createGame(gameData);
+		String id = gameStatus.getId();
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerName("Vasya");
+		playerData.setPlayerType(PlayerType.HUMAN);
+		gameStatus = userService.registerNewPlayer(id, playerData);
 	}
 	
 
