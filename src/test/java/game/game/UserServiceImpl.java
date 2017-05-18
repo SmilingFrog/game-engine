@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private Player createPlayer(PlayerData playerData) {
-		PlayerBuilder playerBuilder = PlayerImpl.getPlayerBuilder();
+		PlayerBuilder playerBuilder = AbstractPlayer.getPlayerBuilder();
 		playerBuilder.setPlayerName(playerData.getPlayerName());
 		playerBuilder.setPlayerType(playerData.getPlayerType());
 		playerBuilder.setPlayerIntelect(playerData.getIntelect());

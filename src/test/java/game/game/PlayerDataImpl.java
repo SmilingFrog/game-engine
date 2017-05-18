@@ -2,40 +2,38 @@ package game.game;
 
 public class PlayerDataImpl implements PlayerData {
 
+	PlayerType playerType;
+	String playerName;
+	String intelect;
+	
 	@Override
 	public void setPlayerType(PlayerType playerType) {
-		// TODO Auto-generated method stub
-		
+		this.playerType = playerType;
 	}
 
 	@Override
 	public void setPlayerName(String playerName) {
-		// TODO Auto-generated method stub
-		
+		this.playerName = playerName;
 	}
 
 	@Override
 	public void setIntelect(String intelect) {
-		// TODO Auto-generated method stub
-		
+		this.intelect = intelect;
 	}
 
 	@Override
 	public String getPlayerName() {
-		// TODO Auto-generated method stub
-		return null;
+		return playerName;
 	}
 
 	@Override
 	public PlayerType getPlayerType() {
-		// TODO Auto-generated method stub
-		return null;
+		return playerType;
 	}
 
 	@Override
 	public String getIntelect() {
-		// TODO Auto-generated method stub
-		return null;
+		return intelect;
 	}
 
 }

@@ -1,5 +1,5 @@
 package game.game;
 
-public interface Player {
+public interface Player extends Observer {
 
 }

@@ -9,6 +9,7 @@ public class Game {
 	int playersNumber;
 	String id;
 	String status;
+	Player nextMovePlayer;
 	
 	private Game(){
 	}
@@ -35,7 +36,13 @@ public class Game {
 			game.id = IdGeneratorImpl.generateId();
 			IdGeneratorImpl.reset();
 			game.status = "PLAYING";
+			subscribePlayers();
+			game.start();
 			return game;
+		}
+
+		private void subscribePlayers() {
+			
 		}
 
 		@Override
@@ -72,6 +79,32 @@ public class Game {
 	public static GameBuilder getGameBuilder() {
 		return new InnerGameBuilder();
 	}
+
+	public void start() {
+		nextMovePlayer = defineThePlayerToMakeNextMove();
+		informSubscribedPlayers();
+	}
+
+	private void informSubscribedPlayers() {
+		for(Player player : players){
+			player.statusChanged();
+		}
+	}
+
+	private Player defineThePlayerToMakeNextMove() {
+		int index = Game.getNextIndex(players.size());
+		String id = index + "";
+		return null;
+	}
+	
+	private static int getNextIndex(int size){
+		if(index >= size){
+			index = 0;
+		}
+		return index++;
+	}
+	
+	private static int index = 0;
 
 	public GameData getGameData() {
 		GameData result = new GameDataImpl();
