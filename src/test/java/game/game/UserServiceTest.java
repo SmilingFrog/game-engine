@@ -43,9 +43,9 @@ public class UserServiceTest {
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createAllPlayers(gameData);
-		GameData gameStatus = userService.createGame(gameData);
-		GameData expectedGameData = prepareExpectedData();
-		assertTrue(isequal(gameStatus, expectedGameData));
+		NewGameResponse response = userService.createGame(gameData);
+		NewGameResponse expectedGameResponse = prepareExpectedResponse();
+		assertTrue(isequal(response, expectedGameResponse));
 		
 	}
 	
@@ -54,10 +54,10 @@ public class UserServiceTest {
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createNotAllPlayers(gameData);
-		GameData gameStatus = userService.createGame(gameData);
-		GameData expectedGameData = prepareExpectedData();
-		expectedGameData.setStatus("BUILDING");
-		assertTrue(isequal(gameStatus, expectedGameData));
+		NewGameResponse response = userService.createGame(gameData);
+		NewGameResponse expectedResponse = prepareExpectedResponse();
+		expectedResponse.gameData.setStatus("BUILDING");
+		assertTrue(isequal(response, expectedResponse));
 	}
 	
 	@Test
@@ -65,15 +65,15 @@ public class UserServiceTest {
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createNotAllPlayers(gameData);
-		GameData gameStatus = userService.createGame(gameData);
-		GameData expectedGameData = prepareExpectedData();
-		expectedGameData.setStatus("BUILDING");
-		assertTrue(isequal(gameStatus, expectedGameData));
-		String id = gameStatus.getId();
+		NewGameResponse response = userService.createGame(gameData);
+		NewGameResponse expectedResponse = prepareExpectedResponse();
+		expectedResponse.gameData.setStatus("BUILDING");
+		assertTrue(isequal(response, expectedResponse));
+		String id = response.gameId;
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerName("Vasya");
 		playerData.setPlayerType(PlayerType.HUMAN);
-		gameStatus = userService.registerNewPlayer(id, playerData);
+		GameData gameStatus = userService.registerNewPlayer(id, playerData);
 		assertEquals(gameStatus.getId(), "1");
 		assertEquals(gameStatus.getStatus(), "PLAYING");
 		gameStatus = playerService.getGameStatus(id);
@@ -86,20 +86,22 @@ public class UserServiceTest {
 		gameData = new GameDataImpl();
 		gameData.setPlayersNumber(2);
 		createAllPlayers(gameData);
-		GameData gameStatus = userService.createGame(gameData);
-		String id = gameStatus.getId();
+		NewGameResponse response = userService.createGame(gameData);
+		String id = response.gameId;
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerName("Vasya");
 		playerData.setPlayerType(PlayerType.HUMAN);
+		GameData gameStatus;
 		gameStatus = userService.registerNewPlayer(id, playerData);
 	}
 	
 
-	private GameData prepareExpectedData() {
-		GameData expectedGameData = new GameDataImpl();
-		expectedGameData.setId("1");
-		expectedGameData.setStatus("PLAYING");
-		return expectedGameData;
+	private NewGameResponse prepareExpectedResponse() {
+		NewGameResponse expectedResponse = new NewGameResponse();
+		expectedResponse.gameId = "1";
+		expectedResponse.gameData = new GameDataImpl();
+		gameData.setStatus("PLAYING");
+		return expectedResponse;
 	}
 
 	private void createAllPlayers(GameData gameData) {
@@ -122,9 +124,9 @@ public class UserServiceTest {
 		
 	}
 
-	private boolean isequal(GameData gameStatus, GameData expectedGameData) {
-		return gameStatus.getId().equals(expectedGameData.getId()) &&
-				gameStatus.getStatus().equals(expectedGameData.getStatus());
+	private boolean isequal(NewGameResponse response, NewGameResponse expectedResponse) {
+		return response.gameId.equals(expectedResponse.gameId) &&
+				response.gameData.getStatus().equals(expectedResponse.gameData.getStatus());
 				
 	}
 

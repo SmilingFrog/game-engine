@@ -16,8 +16,8 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public GameData createGame(GameData gameData) {
-		GameData result = null;
+	public NewGameResponse createGame(GameData gameData) {
+		NewGameResponse result = null;
 		GameBuilder gameBuilder = Game.getGameBuilder();
 		List<PlayerData> playerDataList = gameData.getPlayerDataList();
 		for(PlayerData playerData : playerDataList){
@@ -28,10 +28,12 @@ public class UserServiceImpl implements UserService {
 		if(gameBuilder.allPlayersReady()){
 			Game game = gameBuilder.build();
 			activeGamesRepository.add(game);
-			result = game.getGameData();
+			result = new NewGameResponse();
+			result.gameData = game.getGameData();
 		}else{
 			activeGameBuilderRepository.add(gameBuilder);
-			result = gameBuilder.getGameData();
+			result = new NewGameResponse();
+			result.gameData = gameBuilder.getGameData();
 		}
 		
 		return result;

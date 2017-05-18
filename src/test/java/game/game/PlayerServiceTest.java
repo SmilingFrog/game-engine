@@ -35,9 +35,9 @@ public class PlayerServiceTest {
 	@Test
 	public void whenGettingGameStatusOfTheGameThatIsNotBuiltYetGetGameBuilderStatus() {
 		createNotAllPlayers(gameData);
-		GameData gameStatus = userService.createGame(gameData);
-		String id = gameStatus.getId();
-		gameStatus = playerService.getGameStatus(id);
+		NewGameResponse response = userService.createGame(gameData);
+		String id = response.gameId;
+		GameData gameStatus = playerService.getGameStatus(id);
 		assertNotNull(gameStatus);
 		assertEquals(gameStatus.getId(), "1");
 		assertEquals(gameStatus.getStatus(), "BUILDING");
@@ -46,9 +46,9 @@ public class PlayerServiceTest {
 	@Test
 	public void whenGettingGameStatusOfTheGameThatIsBuiltGetGameStatus() {
 		createAllPlayers(gameData);
-		GameData gameStatus = userService.createGame(gameData);
-		String id = gameStatus.getId();
-		gameStatus = playerService.getGameStatus(id);
+		NewGameResponse response = userService.createGame(gameData);
+		String id = response.gameId;
+		GameData gameStatus = playerService.getGameStatus(id);
 		assertNotNull(gameStatus);
 		assertEquals(gameStatus.getId(), "1");
 		assertEquals(gameStatus.getStatus(), "PLAYING");
