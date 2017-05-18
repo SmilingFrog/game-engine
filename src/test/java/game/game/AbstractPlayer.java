@@ -6,6 +6,7 @@ public abstract class AbstractPlayer implements Player{
 		String playerName;
 		PlayerType playerType;
 		String playerIntelect;
+		String playerId;
 		
 		@Override
 		public void setPlayerName(String playerName) {
