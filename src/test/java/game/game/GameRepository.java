@@ -6,5 +6,7 @@ public interface GameRepository {
 
 	Game findById(String id);
 
+	int size();
+
 
 }

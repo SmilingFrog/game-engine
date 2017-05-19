@@ -1,16 +1,15 @@
 package game.game;
 
-public class IdGeneratorImpl {
+public class IdGeneratorImpl implements IdGenerator {
 
-	static String[] ids = {"1","2","3","4","5"};
-	static int index;
+	long id = 1;
 	
-	public static String generateId() {
-		return ids[(index++)%5];
+	public String generateId() {
+		return id++ + "";
 	}
 	
-	public static void reset(){
-		index = 0;
+	public void reset(){
+		id = 1;
 	}
 
 }

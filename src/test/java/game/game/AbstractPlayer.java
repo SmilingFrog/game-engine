@@ -1,12 +1,22 @@
 package game.game;
 
 public abstract class AbstractPlayer implements Player{
+	String playerName;
+	PlayerType playerType;
+	String playerIntelect;
+	String playerId;
+	PlayerData playerData;
+	
+	public AbstractPlayer(){
+		playerData = new PlayerDataImpl();
+	}
+	
 	private static class InnerPlayerBuilder implements PlayerBuilder{
 
 		String playerName;
 		PlayerType playerType;
 		String playerIntelect;
-		String playerId;
+		String playerId = "1";
 		
 		@Override
 		public void setPlayerName(String playerName) {
@@ -28,10 +38,19 @@ public abstract class AbstractPlayer implements Player{
 			Player result = null;
 			if(playerType == PlayerType.COMPUTER){
 				result = new ComputerPlayer();
+				fillPlayerProperties(result);
 			}else if(playerType == PlayerType.HUMAN){
 				result = new HumanPlayer();
+				fillPlayerProperties(result);
 			}
 			return result;
+		}
+
+		private void fillPlayerProperties(Player result) {
+			result.setPlayerName(this.playerName);
+			result.setPlayerType(this.playerType);
+			result.setPlayerIntelect(this.playerIntelect);
+			result.setPlayerId(Player.PlayerIdGenerator.generateId());
 		}
 		
 	}

@@ -10,8 +10,10 @@ public interface GameBuilder {
 
 	void setPlayersNumber(int playersNumber);
 
-	boolean allPlayersReady();
+	boolean canCreateGame();
 
 	GameData getGameData();
+
+	void setIdGenerator(IdGenerator idGenerator);
 
 }

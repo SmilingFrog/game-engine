@@ -10,6 +10,7 @@ public class Game {
 	String id;
 	String status;
 	Player nextMovePlayer;
+	private static IdGenerator gameIdGenerator = new IdGeneratorImpl();
 	
 	private Game(){
 	}
@@ -20,12 +21,11 @@ public class Game {
 		String id;
 		int playersNumber;
 		String status;
+		IdGenerator idGenerator;
 		
 		public InnerGameBuilder() {
 			players = new ArrayList<>();
 			this.status = "BUILDING";
-			this.id = IdGeneratorImpl.generateId();
-			IdGeneratorImpl.reset();
 		}
 		
 		@Override
@@ -33,8 +33,6 @@ public class Game {
 			Game game = new Game();
 			game.players = this.players;
 			game.playersNumber = this.playersNumber;
-			game.id = IdGeneratorImpl.generateId();
-			IdGeneratorImpl.reset();
 			game.status = "PLAYING";
 			subscribePlayers();
 			game.start();
@@ -57,12 +55,31 @@ public class Game {
 
 		@Override
 		public String getId() {
+			if(id == null && idGenerator != null){
+				id = idGenerator.generateId();
+			}
 			return id;
 		}
 
 		@Override
-		public boolean allPlayersReady() {
-			return playersNumber == players.size();
+		public boolean canCreateGame() {
+			boolean result = false;
+			if(playersNumber == players.size() && 
+					atLeastOnePlayerIsOfTypeHuman()){
+				result = true;
+			}
+			return result;
+		}
+
+		private boolean atLeastOnePlayerIsOfTypeHuman() {
+			boolean result = false;
+			for(Player player : players){
+				PlayerData playerData = player.getPlayerData();
+				if(playerData.getPlayerType().equals(PlayerType.HUMAN)){
+					result = true;
+				}
+			}
+			return result;
 		}
 
 		@Override
@@ -71,13 +88,25 @@ public class Game {
 			gameData.setId(id);
 			gameData.setPlayersNumber(playersNumber);
 			gameData.setStatus(status);
+			for(Player player : players){
+				PlayerData playerData = player.getPlayerData();
+				gameData.addPlayer(playerData);
+			}
 			return gameData;
+		}
+
+		@Override
+		public void setIdGenerator(IdGenerator idGenerator) {
+			this.idGenerator = idGenerator;
+			id = null;
 		}
 		
 	}
 	
 	public static GameBuilder getGameBuilder() {
-		return new InnerGameBuilder();
+		GameBuilder builder = new InnerGameBuilder();
+		builder.setIdGenerator(Game.getGameIdGenerator());
+		return builder;
 	}
 
 	public void start() {
@@ -111,8 +140,16 @@ public class Game {
 		result.setId(id);
 		result.setPlayersNumber(playersNumber);
 		result.setStatus(status);
+		for(Player player : players){
+			PlayerData playerData = player.getPlayerData();
+			result.addPlayer(playerData);
+		}
 		
 		return result;
+	}
+
+	public static IdGenerator getGameIdGenerator() {
+		return gameIdGenerator;
 	}
 	
 

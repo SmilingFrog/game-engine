@@ -14,4 +14,8 @@ public interface PlayerData {
 
 	String getIntelect();
 
+	String getPlayerId();
+
+	void setPlayerId(String playerId);
+
 }

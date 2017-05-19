@@ -21,4 +21,9 @@ public class GameRepositoryImpl implements GameRepository {
 		return games.get(id);
 	}
 
+	@Override
+	public int size() {
+		return games.size();
+	}
+
 }

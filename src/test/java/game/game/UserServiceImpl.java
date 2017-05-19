@@ -19,17 +19,21 @@ public class UserServiceImpl implements UserService {
 	public NewGameResponse createGame(GameData gameData) {
 		NewGameResponse result = null;
 		GameBuilder gameBuilder = Game.getGameBuilder();
-		List<PlayerData> playerDataList = gameData.getPlayerDataList();
-		for(PlayerData playerData : playerDataList){
-			Player player = createPlayer(playerData);
-			gameBuilder.add(player);
-		}
+		addPlayers(gameData, gameBuilder);
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
-		if(gameBuilder.allPlayersReady()){
+		if(gameBuilder.canCreateGame()){
 			Game game = gameBuilder.build();
 			activeGamesRepository.add(game);
 			result = new NewGameResponse();
 			result.gameData = game.getGameData();
+			result.gameId = result.gameData.getId();
+			String playerId = null;
+			for(PlayerData player : gameData.getPlayerDataList()){
+				if(player.getPlayerType().equals(PlayerType.HUMAN)){
+					playerId = player.getPlayerId();
+				}
+			}
+			result.playerId = playerId;	
 		}else{
 			activeGameBuilderRepository.add(gameBuilder);
 			result = new NewGameResponse();
@@ -37,6 +41,14 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		return result;
+	}
+
+	private void addPlayers(GameData gameData, GameBuilder gameBuilder) {
+		List<PlayerData> playerDataList = gameData.getPlayerDataList();
+		for(PlayerData playerData : playerDataList){
+			Player player = createPlayer(playerData);
+			gameBuilder.add(player);
+		}
 	}
 
 	private Player createPlayer(PlayerData playerData) {
@@ -57,7 +69,7 @@ public class UserServiceImpl implements UserService {
 		}
 		Player player = createPlayer(playerData);
 		gameBuilder.add(player);
-		if(gameBuilder.allPlayersReady()){
+		if(gameBuilder.canCreateGame()){
 			Game game = gameBuilder.build();
 			activeGamesRepository.add(game);
 			result = game.getGameData();

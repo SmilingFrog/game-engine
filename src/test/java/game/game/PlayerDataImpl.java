@@ -5,6 +5,7 @@ public class PlayerDataImpl implements PlayerData {
 	PlayerType playerType;
 	String playerName;
 	String intelect;
+	String playerId;
 	
 	@Override
 	public void setPlayerType(PlayerType playerType) {
@@ -34,6 +35,16 @@ public class PlayerDataImpl implements PlayerData {
 	@Override
 	public String getIntelect() {
 		return intelect;
+	}
+
+	@Override
+	public String getPlayerId() {
+		return playerId;
+	}
+
+	@Override
+	public void setPlayerId(String playerId) {
+		this.playerId = playerId;
 	}
 
 }
