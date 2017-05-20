@@ -16,4 +16,6 @@ public interface GameBuilder {
 
 	void setIdGenerator(IdGenerator idGenerator);
 
+	String registerPlayer(PlayerData playerToRegister);
+
 }

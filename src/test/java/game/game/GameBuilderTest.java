@@ -3,6 +3,7 @@ package game.game;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class GameBuilderTest {
@@ -76,16 +77,6 @@ public class GameBuilderTest {
 	}
 	
 	@Test
-	public void AddedButNotRegisteredYetPlayersDoNotHaveId(){
-		createGameData();
-		addPlayersFromPlayerData();
-		GameData gameData = gameBuilder.getGameData();
-		for(PlayerData playerData : gameData.getPlayerDataList()){
-			assertNull(playerData.getPlayerId());
-		}
-	}
-	
-	@Test
 	public void gameBuilderStatusIsBUILDING(){
 		createGameData();
 		addPlayersFromPlayerData();
@@ -93,11 +84,44 @@ public class GameBuilderTest {
 		assertEquals("BUILDING", gameData.getStatus());
 	}
 	
+	
 	@Test
-	public void whenGameDataContainsAtLeastOneHumanPlayerCanBuildGame(){
+	public void whenAddingPlayerOfTypeComputerAssignItAnId(){
 		createGameData();
 		addPlayersFromPlayerData();
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
+		GameData gameDataResponse = gameBuilder.getGameData();
+		assertEquals(2, gameDataResponse.getPlayerDataList().size());
+		for(PlayerData playerData : gameDataResponse.getPlayerDataList()){
+			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
+				assertNotNull(playerData.getPlayerId());
+			}
+		}
+	}
+	
+	@Test
+	public void whenRegisteringAPlayerTakeOneHumanPlayerAndAssignItAnId(){
+		createGameData();
+		addPlayersFromPlayerData();
+		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
+		PlayerData playerToRegister = new PlayerDataImpl();
+		playerToRegister.setPlayerName("Toz");
+		gameBuilder.registerPlayer(playerToRegister);
+		GameData gameDataResponse = gameBuilder.getGameData();
+		for(PlayerData playerData : gameDataResponse.getPlayerDataList()){
+				assertNotNull(playerData.getPlayerId());
+		}
+	}
+	
+	@Test
+	public void canCreateGameOnlyWhenAllPlayersHaveIds(){
+		createGameData();
+		addPlayersFromPlayerData();
+		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
+		assertFalse(gameBuilder.canCreateGame());
+		PlayerData playerToRegister = new PlayerDataImpl();
+		playerToRegister.setPlayerName("Toz");
+		gameBuilder.registerPlayer(playerToRegister);
 		assertTrue(gameBuilder.canCreateGame());
 	}
 
@@ -119,14 +143,15 @@ public class GameBuilderTest {
 		gameData = new GameDataImpl();
 		int playersNumber = 2;
 		gameData.setPlayersNumber(playersNumber);
-		PlayerData playerData = new PlayerDataImpl();
-		createPlayers(gameData, playerData);
+		createPlayers(gameData);
 	}
 	
-	private void createPlayers(GameData gameData, PlayerData playerData) {
+	private void createPlayers(GameData gameData) {
+		PlayerData playerData = new PlayerDataImpl();
 		PlayerType playerType = PlayerType.HUMAN;
 		playerData.setPlayerType(playerType);
 		gameData.addPlayer(playerData);
+		playerData = new PlayerDataImpl();
 		playerType = PlayerType.COMPUTER;
 		playerData.setPlayerType(playerType);
 		gameData.addPlayer(playerData);

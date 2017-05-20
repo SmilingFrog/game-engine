@@ -22,10 +22,12 @@ public class Game {
 		int playersNumber;
 		String status;
 		IdGenerator idGenerator;
+		PlayerIdGenerator playerIdGenerator;
 		
 		public InnerGameBuilder() {
 			players = new ArrayList<>();
 			this.status = "BUILDING";
+			playerIdGenerator = new PlayerIdGeneratorImpl();
 		}
 		
 		@Override
@@ -45,6 +47,11 @@ public class Game {
 
 		@Override
 		public void add(Player player) {
+			PlayerData playerData = player.getPlayerData();
+			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
+				String playerId = playerIdGenerator.generateId();
+				player.setPlayerId(playerId);
+			}
 			this.players.add(player);
 		}
 
@@ -65,9 +72,24 @@ public class Game {
 		public boolean canCreateGame() {
 			boolean result = false;
 			if(playersNumber == players.size() && 
-					atLeastOnePlayerIsOfTypeHuman()){
+					atLeastOnePlayerIsOfTypeHuman() &&
+					allPlayersHaveIds()){
 				result = true;
 			}
+			return result;
+		}
+
+		private boolean allPlayersHaveIds() {
+			boolean result = true;
+			
+			for(Player player : players){
+				PlayerData playerData = player.getPlayerData();
+				String playerId = playerData.getPlayerId(); 
+				if(playerId == null){
+					result = false;
+				}
+			}
+			
 			return result;
 		}
 
@@ -99,6 +121,20 @@ public class Game {
 		public void setIdGenerator(IdGenerator idGenerator) {
 			this.idGenerator = idGenerator;
 			id = null;
+		}
+
+		@Override
+		public String registerPlayer(PlayerData playerToRegister) {
+			String playerId = null;
+			for(Player player : players){
+				PlayerData playerData = player.getPlayerData();
+				if(playerData.getPlayerType().equals(PlayerType.HUMAN)){
+					player.setPlayerName(playerToRegister.getPlayerName());
+					playerId = playerIdGenerator.generateId();
+					player.setPlayerId(playerId);
+				}
+			}
+			return playerId;
 		}
 		
 	}

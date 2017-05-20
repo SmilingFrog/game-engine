@@ -23,6 +23,7 @@ public class HumanPlayer extends AbstractPlayer {
 	@Override
 	public void setPlayerId(String generateId) {
 		this.playerId = generateId;
+		playerData.setPlayerId(generateId);
 	}
 
 	@Override
