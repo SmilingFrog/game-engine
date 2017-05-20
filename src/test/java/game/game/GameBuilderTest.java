@@ -69,7 +69,7 @@ public class GameBuilderTest {
 	@Test
 	public void canAddPlayersFromPlayerData(){
 		createGameData();
-		addPlayersFromPlayerData();
+		addPlayersFromPlayerData(gameBuilder);
 		GameData gameData = gameBuilder.getGameData();
 		assertEquals(null, gameData.getId());
 		assertNotNull(gameData.getPlayerDataList());
@@ -79,7 +79,7 @@ public class GameBuilderTest {
 	@Test
 	public void gameBuilderStatusIsBUILDING(){
 		createGameData();
-		addPlayersFromPlayerData();
+		addPlayersFromPlayerData(gameBuilder);
 		GameData gameData = gameBuilder.getGameData();
 		assertEquals("BUILDING", gameData.getStatus());
 	}
@@ -88,7 +88,7 @@ public class GameBuilderTest {
 	@Test
 	public void whenAddingPlayerOfTypeComputerAssignItAnId(){
 		createGameData();
-		addPlayersFromPlayerData();
+		addPlayersFromPlayerData(gameBuilder);
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		GameData gameDataResponse = gameBuilder.getGameData();
 		assertEquals(2, gameDataResponse.getPlayerDataList().size());
@@ -102,7 +102,7 @@ public class GameBuilderTest {
 	@Test
 	public void whenRegisteringAPlayerTakeOneHumanPlayerAndAssignItAnId(){
 		createGameData();
-		addPlayersFromPlayerData();
+		addPlayersFromPlayerData(gameBuilder);
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		PlayerData playerToRegister = new PlayerDataImpl();
 		playerToRegister.setPlayerName("Toz");
@@ -116,7 +116,7 @@ public class GameBuilderTest {
 	@Test
 	public void canCreateGameOnlyWhenAllPlayersHaveIds(){
 		createGameData();
-		addPlayersFromPlayerData();
+		addPlayersFromPlayerData(gameBuilder);
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		assertFalse(gameBuilder.canCreateGame());
 		PlayerData playerToRegister = new PlayerDataImpl();
@@ -124,8 +124,33 @@ public class GameBuilderTest {
 		gameBuilder.registerPlayer(playerToRegister);
 		assertTrue(gameBuilder.canCreateGame());
 	}
+	
+	@Test
+	public void eachGameBuilderHasItsOwnPlayerIdGenerator(){
+		createGameData();
+		addPlayersFromPlayerData(gameBuilder);
+		GameBuilder secondGameBuilder = Game.getGameBuilder();
+		addPlayersFromPlayerData(secondGameBuilder);
+		GameData gameDataResult = gameBuilder.getGameData();
+		String playerIdByGameBuilder1 = null;
+		for(PlayerData playerData : gameDataResult.getPlayerDataList()){
+			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
+				playerIdByGameBuilder1 = playerData.getPlayerId();
+			}
+		}
+		assertNotNull(playerIdByGameBuilder1);
+		String playerIdByGameBuilder2 = null;
+		gameDataResult = secondGameBuilder.getGameData();
+		for(PlayerData playerData : gameDataResult.getPlayerDataList()){
+			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
+				playerIdByGameBuilder2 = playerData.getPlayerId();
+			}
+		}
+		assertNotNull(playerIdByGameBuilder1);
+		assertEquals(playerIdByGameBuilder1, playerIdByGameBuilder2);
+	}
 
-	private void addPlayersFromPlayerData() {
+	private void addPlayersFromPlayerData(GameBuilder gameBuilder) {
 		Player player = null;
 		for(PlayerData playerData : gameData.getPlayerDataList()){
 			if(playerData.getPlayerType().equals(PlayerType.HUMAN)){
