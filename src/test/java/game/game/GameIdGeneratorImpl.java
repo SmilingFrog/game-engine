@@ -1,6 +1,6 @@
 package game.game;
 
-public class IdGeneratorImpl implements IdGenerator {
+public class GameIdGeneratorImpl implements GameIdGenerator {
 
 	long id = 1;
 	

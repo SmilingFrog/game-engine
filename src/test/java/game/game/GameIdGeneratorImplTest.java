@@ -6,13 +6,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-public class IdGeneratorImplTest {
+public class GameIdGeneratorImplTest {
 
 	@Ignore
 	@Test
 	public void test() {
 		for(int i = 0; i < 10; i++ ){
-			System.out.println(new IdGeneratorImpl().generateId());
+			System.out.println(new GameIdGeneratorImpl().generateId());
 		}
 	}
 

@@ -10,7 +10,7 @@ public class Game {
 	String id;
 	String status;
 	Player nextMovePlayer;
-	private static IdGenerator gameIdGenerator = new IdGeneratorImpl();
+	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
 	
 	private Game(){
 	}
@@ -21,7 +21,7 @@ public class Game {
 		String id;
 		int playersNumber;
 		String status;
-		IdGenerator idGenerator;
+		GameIdGenerator idGenerator;
 		PlayerIdGenerator playerIdGenerator;
 		
 		public InnerGameBuilder() {
@@ -32,6 +32,9 @@ public class Game {
 		
 		@Override
 		public Game build() {
+			if(!canCreateGame()){
+				throw new CantCreateGameException();
+			}
 			Game game = new Game();
 			game.players = this.players;
 			game.playersNumber = this.playersNumber;
@@ -118,7 +121,7 @@ public class Game {
 		}
 
 		@Override
-		public void setIdGenerator(IdGenerator idGenerator) {
+		public void setIdGenerator(GameIdGenerator idGenerator) {
 			this.idGenerator = idGenerator;
 			id = null;
 		}
@@ -184,7 +187,7 @@ public class Game {
 		return result;
 	}
 
-	public static IdGenerator getGameIdGenerator() {
+	public static GameIdGenerator getGameIdGenerator() {
 		return gameIdGenerator;
 	}
 	

@@ -1,6 +1,6 @@
 package game.game;
 
-public interface IdGenerator {
+public interface GameIdGenerator {
 	
 	public String generateId();
 	

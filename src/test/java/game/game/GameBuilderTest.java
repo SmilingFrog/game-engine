@@ -2,6 +2,8 @@ package game.game;
 
 import static org.junit.Assert.*;
 
+import javax.management.RuntimeErrorException;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,12 +12,13 @@ public class GameBuilderTest {
 
 	GameBuilder gameBuilder;
 	GameData gameData;
+	GameIdGenerator idGenerator;
 	
 	@Before
 	public void setup(){
 		gameBuilder = Game.getGameBuilder();
-		
 	}
+	
 	
 	@Test
 	public void newGameBuilderEveryTime() {
@@ -26,7 +29,7 @@ public class GameBuilderTest {
 	@Test
 	public void whenIdGeneratorisSetGameIdIsGeneratedAndAssignedOnlyOnce(){
 		String expectedGameId = "1";
-		IdGenerator idGenerator = new IdGeneratorImpl();
+		GameIdGenerator idGenerator = Game.getGameIdGenerator();
 		gameBuilder.setIdGenerator(idGenerator);
 		assertEquals(expectedGameId, gameBuilder.getId());
 		assertEquals(expectedGameId, gameBuilder.getId());
@@ -36,21 +39,25 @@ public class GameBuilderTest {
 	@Test
 	public void whenIdGeneratorisResetGameIdIsGeneratedByNewGeneratorOnlyOnce(){
 		String expectedGameId = "1";
-		IdGenerator idGenerator = new IdGeneratorImpl();
-		gameBuilder.setIdGenerator(idGenerator);
 		assertEquals(expectedGameId, gameBuilder.getId());
 		assertEquals(expectedGameId, gameBuilder.getId());
-		gameBuilder.setIdGenerator(idGenerator);
+		resetIdGenerator();
 		expectedGameId = "2";
 		assertEquals(expectedGameId, gameBuilder.getId());
 		assertEquals(expectedGameId, gameBuilder.getId());
 		idGenerator.reset();
 	}
+
+
+	private void resetIdGenerator() {
+		idGenerator = Game.getGameIdGenerator();
+		gameBuilder.setIdGenerator(idGenerator);
+	}
 	
 	@Test
 	public void IdGeneratorReturnedbyGameIsSingleton(){
-		IdGenerator generator = Game.getGameIdGenerator();
-		IdGenerator anotherGenerator = Game.getGameIdGenerator();
+		GameIdGenerator generator = Game.getGameIdGenerator();
+		GameIdGenerator anotherGenerator = Game.getGameIdGenerator();
 		assertTrue(generator == anotherGenerator);
 	}
 	
@@ -68,7 +75,7 @@ public class GameBuilderTest {
 	
 	@Test
 	public void canAddPlayersFromPlayerData(){
-		createGameData();
+		createGameDataForHumanComputerGame();
 		addPlayersFromPlayerData(gameBuilder);
 		GameData gameData = gameBuilder.getGameData();
 		assertEquals(null, gameData.getId());
@@ -76,22 +83,31 @@ public class GameBuilderTest {
 		assertEquals(2, gameData.getPlayerDataList().size());
 	}
 	
+	private void createGameDataForHumanComputerGame() {
+		createGameData(2, PlayerType.HUMAN, PlayerType.COMPUTER);
+	}
+
+
 	@Test
 	public void gameBuilderStatusIsBUILDING(){
-		createGameData();
+		createGameDataForHumanComputerGame();
 		addPlayersFromPlayerData(gameBuilder);
-		GameData gameData = gameBuilder.getGameData();
-		assertEquals("BUILDING", gameData.getStatus());
+		GameData gameDataResponse = gameBuilder.getGameData();
+		assertEquals("BUILDING", gameDataResponse.getStatus());
 	}
 	
 	
 	@Test
 	public void whenAddingPlayerOfTypeComputerAssignItAnId(){
-		createGameData();
+		createGameDataForHumanComputerGame();
 		addPlayersFromPlayerData(gameBuilder);
-		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		GameData gameDataResponse = gameBuilder.getGameData();
 		assertEquals(2, gameDataResponse.getPlayerDataList().size());
+		assertThatAllPlayersOfComputerTypeHaveAnId(gameDataResponse);
+	}
+
+
+	private void assertThatAllPlayersOfComputerTypeHaveAnId(GameData gameDataResponse) {
 		for(PlayerData playerData : gameDataResponse.getPlayerDataList()){
 			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
 				assertNotNull(playerData.getPlayerId());
@@ -101,9 +117,8 @@ public class GameBuilderTest {
 	
 	@Test
 	public void whenRegisteringAPlayerTakeOneHumanPlayerAndAssignItAnId(){
-		createGameData();
+		createGameDataForHumanComputerGame();
 		addPlayersFromPlayerData(gameBuilder);
-		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		PlayerData playerToRegister = new PlayerDataImpl();
 		playerToRegister.setPlayerName("Toz");
 		gameBuilder.registerPlayer(playerToRegister);
@@ -113,12 +128,13 @@ public class GameBuilderTest {
 		}
 	}
 	
-	@Test
+	@Test(expected = CantCreateGameException.class)
 	public void canCreateGameOnlyWhenAllPlayersHaveIds(){
-		createGameData();
+		createGameDataForHumanComputerGame();
 		addPlayersFromPlayerData(gameBuilder);
 		gameBuilder.setPlayersNumber(gameData.getPlayersNumber());
 		assertFalse(gameBuilder.canCreateGame());
+		Game game = gameBuilder.build();
 		PlayerData playerToRegister = new PlayerDataImpl();
 		playerToRegister.setPlayerName("Toz");
 		gameBuilder.registerPlayer(playerToRegister);
@@ -127,18 +143,21 @@ public class GameBuilderTest {
 	
 	@Test
 	public void eachGameBuilderHasItsOwnPlayerIdGenerator(){
-		createGameData();
+		createGameDataForHumanComputerGame();
 		addPlayersFromPlayerData(gameBuilder);
 		GameBuilder secondGameBuilder = Game.getGameBuilder();
 		addPlayersFromPlayerData(secondGameBuilder);
 		GameData gameDataResult = gameBuilder.getGameData();
-		String playerIdByGameBuilder1 = null;
-		for(PlayerData playerData : gameDataResult.getPlayerDataList()){
-			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
-				playerIdByGameBuilder1 = playerData.getPlayerId();
-			}
-		}
+		String playerIdByGameBuilder1 = getPlayerIdAssignedByBuilder1(gameDataResult);
 		assertNotNull(playerIdByGameBuilder1);
+		String playerIdByGameBuilder2 = getPlayerIdAssignedByBuilder2(secondGameBuilder);
+		assertNotNull(playerIdByGameBuilder1);
+		assertEquals(playerIdByGameBuilder1, playerIdByGameBuilder2);
+	}
+
+
+	private String getPlayerIdAssignedByBuilder2(GameBuilder secondGameBuilder) {
+		GameData gameDataResult;
 		String playerIdByGameBuilder2 = null;
 		gameDataResult = secondGameBuilder.getGameData();
 		for(PlayerData playerData : gameDataResult.getPlayerDataList()){
@@ -146,8 +165,18 @@ public class GameBuilderTest {
 				playerIdByGameBuilder2 = playerData.getPlayerId();
 			}
 		}
-		assertNotNull(playerIdByGameBuilder1);
-		assertEquals(playerIdByGameBuilder1, playerIdByGameBuilder2);
+		return playerIdByGameBuilder2;
+	}
+
+
+	private String getPlayerIdAssignedByBuilder1(GameData gameDataResult) {
+		String playerIdByGameBuilder1 = null;
+		for(PlayerData playerData : gameDataResult.getPlayerDataList()){
+			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
+				playerIdByGameBuilder1 = playerData.getPlayerId();
+			}
+		}
+		return playerIdByGameBuilder1;
 	}
 
 	private void addPlayersFromPlayerData(GameBuilder gameBuilder) {
@@ -164,22 +193,23 @@ public class GameBuilderTest {
 		}
 	}
 
-	private void createGameData() {
+	private void createGameData(int numberOfPlayers, PlayerType ...playerTypes) {
 		gameData = new GameDataImpl();
-		int playersNumber = 2;
+		int playersNumber = numberOfPlayers;
 		gameData.setPlayersNumber(playersNumber);
-		createPlayers(gameData);
+		createPlayers(gameData, playersNumber, playerTypes);
 	}
 	
-	private void createPlayers(GameData gameData) {
-		PlayerData playerData = new PlayerDataImpl();
-		PlayerType playerType = PlayerType.HUMAN;
-		playerData.setPlayerType(playerType);
-		gameData.addPlayer(playerData);
-		playerData = new PlayerDataImpl();
-		playerType = PlayerType.COMPUTER;
-		playerData.setPlayerType(playerType);
-		gameData.addPlayer(playerData);
+	private void createPlayers(GameData gameData, int playersNumber, PlayerType ... playerTypes) {
+		if(playerTypes.length != playersNumber){
+			throw new RuntimeException("Number of players must equal the number of player Types");
+		}
+		PlayerData playerData = null;
+		for(PlayerType playerType : playerTypes){
+			playerData = new PlayerDataImpl();
+			playerData.setPlayerType(playerType);
+			gameData.addPlayer(playerData);
+		}
 	}
 	
 

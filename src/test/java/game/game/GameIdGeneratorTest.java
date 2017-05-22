@@ -8,7 +8,7 @@ public class GameIdGeneratorTest {
 
 	@Test
 	public void test() {
-		IdGenerator idGenerator = Game.getGameIdGenerator();
+		GameIdGenerator idGenerator = Game.getGameIdGenerator();
 	}
 
 }
