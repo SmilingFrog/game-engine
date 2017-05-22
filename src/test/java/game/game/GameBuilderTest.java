@@ -181,13 +181,14 @@ public class GameBuilderTest {
 
 	private void addPlayersFromPlayerData(GameBuilder gameBuilder) {
 		Player player = null;
+		PlayerBuilder playerBuider = AbstractPlayer.getPlayerBuilder();
 		for(PlayerData playerData : gameData.getPlayerDataList()){
 			if(playerData.getPlayerType().equals(PlayerType.HUMAN)){
-				player = new HumanPlayer();
-				player.setPlayerType(PlayerType.HUMAN);
+				playerBuider.setPlayerType(PlayerType.HUMAN);
+				player = playerBuider.build();
 			}else if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
-				player = new ComputerPlayer();
-				player.setPlayerType(PlayerType.COMPUTER);
+				playerBuider.setPlayerType(PlayerType.COMPUTER);
+				player = playerBuider.build();
 			}
 			gameBuilder.add(player);
 		}
