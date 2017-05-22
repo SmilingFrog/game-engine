@@ -50,7 +50,6 @@ public abstract class AbstractPlayer implements Player{
 			result.setPlayerName(this.playerName);
 			result.setPlayerType(this.playerType);
 			result.setPlayerIntelect(this.playerIntelect);
-			result.setPlayerId(Player.PlayerIdGenerator.generateId());
 		}
 		
 	}
