@@ -16,14 +16,16 @@ public class PlayerServiceImpl implements PlayerService {
 	}
 
 	@Override
-	public GameData getGameStatus(String id) {
-		GameData result = null; 
+	public GameStatusResult getGameStatus(String id) {
+		GameStatusResult result = new GameStatusResult(); 
 		GameBuilder	builder = activeGameBuilderRepository.findById(id);
 		if(builder != null){
-			result = builder.getGameData();
+			result.gameData = builder.getGameData();
+			result.gameId = result.gameData.getId();
 		}else{
 			Game game = activeGamesRepository.findById(id);
-			result = game.getGameData();
+			result.gameData = game.getGameData();
+			result.gameId = result.gameData.getId();
 		}
 		return result;
 	}

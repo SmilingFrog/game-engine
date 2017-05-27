@@ -6,6 +6,6 @@ public interface PlayerService {
 
 	void setActiveGameBuilderRepository(GameBuilderRepository gameBuilderRepository);
 
-	GameData getGameStatus(String id);
+	GameStatusResult getGameStatus(String id);
 
 }

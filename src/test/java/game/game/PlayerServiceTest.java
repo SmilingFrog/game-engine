@@ -9,7 +9,7 @@ public class PlayerServiceTest {
 	
 	UserService userService;
 	
-	GameData gameData;
+	GameBlueprint blueprint;
 	
 	GameRepository gameRepository;
 	
@@ -28,30 +28,28 @@ public class PlayerServiceTest {
 		playerService = new PlayerServiceImpl();
 		playerService.setAcactiveGamesRepository(gameRepository);
 		playerService.setActiveGameBuilderRepository(gameBuilderRepository);
-		gameData = new GameDataImpl();
-		gameData.setPlayersNumber(2);
+		blueprint = new GameBlueprintImpl();
+		blueprint.setPlayersNumber(2);
 	}
 	
 	@Test
 	public void whenGettingGameStatusOfTheGameThatIsNotBuiltYetGetGameBuilderStatus() {
-		createNotAllPlayers(gameData);
-		NewGameResponse response = userService.createGame(gameData);
+		NewGameResponse response = userService.createGame(blueprint);
 		String id = response.gameId;
-		GameData gameStatus = playerService.getGameStatus(id);
+		GameStatusResult gameStatus = playerService.getGameStatus(id);
 		assertNotNull(gameStatus);
-		assertEquals(gameStatus.getId(), "1");
-		assertEquals(gameStatus.getStatus(), "BUILDING");
+		assertEquals(gameStatus.gameId, "1");
+		assertEquals(gameStatus.gameData.getStatus(), "BUILDING");
 	}
 	
 	@Test
 	public void whenGettingGameStatusOfTheGameThatIsBuiltGetGameStatus() {
-		createAllPlayers(gameData);
-		NewGameResponse response = userService.createGame(gameData);
+		NewGameResponse response = userService.createGame(blueprint);
 		String id = response.gameId;
-		GameData gameStatus = playerService.getGameStatus(id);
+		GameStatusResult gameStatus = playerService.getGameStatus(id);
 		assertNotNull(gameStatus);
-		assertEquals(gameStatus.getId(), "1");
-		assertEquals(gameStatus.getStatus(), "PLAYING");
+		assertEquals(gameStatus.gameId, "1");
+		assertEquals(gameStatus.gameData.getStatus(), "PLAYING");
 	}
 	
 	private void createAllPlayers(GameData gameData) {

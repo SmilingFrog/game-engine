@@ -14,7 +14,7 @@ public class UserServiceTest {
 
 	UserService userService;
 	
-	GameData gameData;
+	GameBlueprint blueprint;
 	
 	GameRepository gameRepository;
 	
@@ -36,63 +36,96 @@ public class UserServiceTest {
 		playerService = new PlayerServiceImpl();
 		playerService.setAcactiveGamesRepository(gameRepository);
 		playerService.setActiveGameBuilderRepository(gameBuilderRepository);
+		blueprint = new GameBlueprintImpl();
 	}
 	
 	@Test
-	public void whenAllPlayersAreSetInGameDataReturnNewGameStatusPlaying() {
-		gameData = new GameDataImpl();
-		gameData.setPlayersNumber(2);
-		createAllPlayers(gameData);
-		NewGameResponse response = userService.createGame(gameData);
+	public void whenNumberOfPlayersIs2AndPlayersAreHumanAndComputer() {
+		prepareBlueprint(1,1);
+		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedGameResponse = prepareExpectedResponse();
+		System.out.println(response);
 		assertTrue(isequal(response, expectedGameResponse));
-		
+		Game.getGameIdGenerator().reset();
+	}
+	
+	public void prepareBlueprint(int numberOfComputerPlayers, int numberOfHumanPlayers) {
+		blueprint.setPlayersNumber(numberOfComputerPlayers + numberOfHumanPlayers);
+		for(int i = 0; i < numberOfComputerPlayers; i++){
+			addPlayerOfType(PlayerType.COMPUTER);			
+		}
+		for(int i = 0; i < numberOfHumanPlayers; i++){
+			addPlayerOfType(PlayerType.HUMAN);
+		}		
+		PlayerData playerDataToRegister = new PlayerDataImpl();
+		playerDataToRegister.setPlayerName("Toz");
+		playerDataToRegister.setPlayerType(PlayerType.HUMAN);
+		blueprint.setPlayerDataToRegisister(playerDataToRegister);
+	}
+	
+	public void addPlayerOfType(PlayerType playerType) {
+		PlayerData playerData = new PlayerDataImpl();
+		 playerData.setPlayerType(playerType);
+		 blueprint.addPlayer(playerData);
 	}
 	
 	@Test
 	public void whenNotAllPlayersAreSetInGameDataReturnNewGameStatusBuilding() {
-		gameData = new GameDataImpl();
-		gameData.setPlayersNumber(2);
-		createNotAllPlayers(gameData);
-		NewGameResponse response = userService.createGame(gameData);
+		int computerPlayers = 1;
+		int humanPlayers = 2;
+		prepareBlueprint(computerPlayers, humanPlayers);
+		Game.getGameIdGenerator().reset();
+		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedResponse = prepareExpectedResponse();
 		expectedResponse.gameData.setStatus("BUILDING");
+		System.out.println(response);
+		System.out.println(response.gameId + "  " + expectedResponse.gameId);
+		System.out.println(response.gameData.getStatus() + " " + expectedResponse.gameData.getStatus());
 		assertTrue(isequal(response, expectedResponse));
+		Game.getGameIdGenerator().reset();
 	}
 	
 	@Test
 	public void whenAddingAPlayerSoThatAllPlayersAreRegisteredReturnGameStatusPlaying() {
-		gameData = new GameDataImpl();
-		gameData.setPlayersNumber(2);
-		createNotAllPlayers(gameData);
-		NewGameResponse response = userService.createGame(gameData);
+		int computerPlayers = 1;
+		int humanPlayers = 2;
+		prepareBlueprint(computerPlayers, humanPlayers);
+		Game.getGameIdGenerator().reset();
+		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedResponse = prepareExpectedResponse();
 		expectedResponse.gameData.setStatus("BUILDING");
+		System.out.println(response);
+		System.out.println(response.gameId + "  " + expectedResponse.gameId);
+		System.out.println(response.gameData.getStatus() + " " + expectedResponse.gameData.getStatus());
 		assertTrue(isequal(response, expectedResponse));
 		String id = response.gameId;
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerName("Vasya");
 		playerData.setPlayerType(PlayerType.HUMAN);
-		GameData gameStatus = userService.registerNewPlayer(id, playerData);
-		assertEquals(gameStatus.getId(), "1");
-		assertEquals(gameStatus.getStatus(), "PLAYING");
-		gameStatus = playerService.getGameStatus(id);
-		assertEquals(gameStatus.getId(), "1");
-		assertEquals(gameStatus.getStatus(), "PLAYING");
+		NewPlayerRegisteredResult gameStatus = userService.registerNewPlayer(id, playerData);
+		System.out.println(gameStatus);
+		assertEquals(gameStatus.gameId, "1");
+		assertEquals(gameStatus.gameData.getStatus(), "PLAYING");
+		GameStatusResult gameStatusResult = playerService.getGameStatus(id);
+		System.out.println(gameStatusResult);
+		assertEquals(gameStatusResult.gameId, "1");
+		assertEquals(gameStatusResult.gameData.getStatus(), "PLAYING");
+		Game.getGameIdGenerator().reset();
 	}
 	
 	@Test(expected = RuntimeException.class)
 	public void whenTryingToRegisterNewUserToTheGameThatHasAlreadyStartedThrowException(){
-		gameData = new GameDataImpl();
-		gameData.setPlayersNumber(2);
-		createAllPlayers(gameData);
-		NewGameResponse response = userService.createGame(gameData);
+		int computerPlayers = 1;
+		int humanPlayers = 1;
+		prepareBlueprint(computerPlayers, humanPlayers);
+		NewGameResponse response = userService.createGame(blueprint);
 		String id = response.gameId;
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerName("Vasya");
 		playerData.setPlayerType(PlayerType.HUMAN);
-		GameData gameStatus;
+		NewPlayerRegisteredResult gameStatus;
 		gameStatus = userService.registerNewPlayer(id, playerData);
+		Game.getGameIdGenerator().reset();
 	}
 	
 
@@ -100,30 +133,11 @@ public class UserServiceTest {
 		NewGameResponse expectedResponse = new NewGameResponse();
 		expectedResponse.gameId = "1";
 		expectedResponse.gameData = new GameDataImpl();
-		gameData.setStatus("PLAYING");
+		expectedResponse.gameData.setStatus("PLAYING");
+		PlayerData playerData = new PlayerDataImpl();
 		return expectedResponse;
 	}
-
-	private void createAllPlayers(GameData gameData) {
-		PlayerData playerData = new PlayerDataImpl();
-		playerData.setPlayerType(PlayerType.HUMAN);
-		playerData.setPlayerName("Tozik");
-		gameData.addPlayer(playerData);
-		playerData = new PlayerDataImpl();
-		playerData.setPlayerType(PlayerType.COMPUTER);
-		playerData.setPlayerName("ELECTRO BRAIN");
-		playerData.setIntelect("RANDOM");
-		gameData.addPlayer(playerData);
-	}
 	
-	private void createNotAllPlayers(GameData gameData) {
-		PlayerData playerData = new PlayerDataImpl();
-		playerData.setPlayerType(PlayerType.HUMAN);
-		playerData.setPlayerName("Tozik");
-		gameData.addPlayer(playerData);
-		
-	}
-
 	private boolean isequal(NewGameResponse response, NewGameResponse expectedResponse) {
 		return response.gameId.equals(expectedResponse.gameId) &&
 				response.gameData.getStatus().equals(expectedResponse.gameData.getStatus());

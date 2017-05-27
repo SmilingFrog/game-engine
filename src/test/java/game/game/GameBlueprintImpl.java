@@ -7,53 +7,45 @@ public class GameBlueprintImpl implements GameBlueprint {
 
 	int playersNum;
 	List<PlayerData> players;
+	PlayerData playerToRegister;
 	
 	public GameBlueprintImpl() {
 		players = new ArrayList<>();
 	}
 	
+
 	@Override
-	public void setPlayersNumber(int playersNum) {
-		this.playersNum = playersNum;
+	public PlayerData getPlayerDataToRegister() {
+		return playerToRegister;
 	}
 
 	@Override
-	public void setId(String id) {
-		// TODO Auto-generated method stub
-		
+	public void setPlayerDataToRegisister(PlayerData playerDataToRegister) {
+		playerToRegister = playerDataToRegister;
 	}
 
-	@Override
-	public void setStatus(String status) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setPlayersNumber(int playerNumber) {
+		playersNum = playerNumber;
 	}
 
+
 	@Override
-	public String getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getPlayersNumber() {
+		return playersNum;
 	}
+
 
 	@Override
 	public void addPlayer(PlayerData playerData) {
 		players.add(playerData);
 	}
 
-	@Override
-	public List<PlayerData> getPlayerDataList() {
-		return players;
-	}
 
 	@Override
-	public int getPlayersNumber() {
-		return playersNum;
+	public List<PlayerData> getPlayersData() {
+		return players;
 	}
 
 }

@@ -2,8 +2,8 @@ package game.game;
 
 public interface UserService {
 
-	NewGameResponse createGame(GameData gameData);
+	NewGameResponse createGame(GameBlueprint blueprint);
 	public void setAcactiveGamesRepository(GameRepository repo);
 	public void setActiveGameBuilderRepository(GameBuilderRepository repo);
-	GameData registerNewPlayer(String id, PlayerData playerData);
+	NewPlayerRegisteredResult registerNewPlayer(String id, PlayerData playerData);
 }

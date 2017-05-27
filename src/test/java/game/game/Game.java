@@ -39,6 +39,7 @@ public class Game {
 			game.players = this.players;
 			game.playersNumber = this.playersNumber;
 			game.status = "PLAYING";
+			game.id = this.getId();
 			subscribePlayers();
 			game.start();
 			return game;
@@ -131,10 +132,12 @@ public class Game {
 			String playerId = null;
 			for(Player player : players){
 				PlayerData playerData = player.getPlayerData();
-				if(playerData.getPlayerType().equals(PlayerType.HUMAN)){
+				if(playerData.getPlayerType().equals(PlayerType.HUMAN) &&
+						playerData.getPlayerId() == null){
 					player.setPlayerName(playerToRegister.getPlayerName());
 					playerId = playerIdGenerator.generateId();
 					player.setPlayerId(playerId);
+					break;
 				}
 			}
 			return playerId;
