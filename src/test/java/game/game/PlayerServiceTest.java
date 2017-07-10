@@ -46,49 +46,54 @@ public class PlayerServiceTest {
 		playerService = new PlayerServiceImpl();
 		playerService.setAcactiveGamesRepository(gameRepository);
 		playerService.setActiveGameBuilderRepository(gameBuilderRepository);
+		
 		blueprint = new GameBlueprintImpl();
 		blueprint.setPlayersNumber(2);
+		
 	}
 	
 	@Test
 	public void whenGettingGameStatusOfTheGameThatIsNotBuiltYetGetGameBuilderStatus() {
+		prepareBlueprint(0, 2);
 		NewGameResponse response = userService.createGame(blueprint);
 		String id = response.gameId;
 		GameStatusResult gameStatus = playerService.getGameStatus(id);
 		assertNotNull(gameStatus);
 		assertEquals(gameStatus.gameId, "1");
 		assertEquals(gameStatus.gameData.getStatus(), "BUILDING");
+		Game.getGameIdGenerator().reset();
 	}
 	
-	@Ignore
 	@Test
 	public void whenGettingGameStatusOfTheGameThatIsBuiltGetGameStatus() {
+		prepareBlueprint(1, 1);
 		NewGameResponse response = userService.createGame(blueprint);
 		String id = response.gameId;
 		GameStatusResult gameStatus = playerService.getGameStatus(id);
 		assertNotNull(gameStatus);
 		assertEquals(gameStatus.gameId, "1");
 		assertEquals(gameStatus.gameData.getStatus(), "PLAYING");
+		Game.getGameIdGenerator().reset();
 	}
 	
-	private void createAllPlayers(GameData gameData) {
-		PlayerData playerData = new PlayerDataImpl();
-		playerData.setPlayerType(PlayerType.HUMAN);
-		playerData.setPlayerName("Tozik");
-		gameData.addPlayer(playerData);
-		playerData = new PlayerDataImpl();
-		playerData.setPlayerType(PlayerType.COMPUTER);
-		playerData.setPlayerName("ELECTRO BRAIN");
-		playerData.setIntelect("RANDOM");
-		gameData.addPlayer(playerData);
+	public void prepareBlueprint(int numberOfComputerPlayers, int numberOfHumanPlayers) {
+		blueprint.setPlayersNumber(numberOfComputerPlayers + numberOfHumanPlayers);
+		for(int i = 0; i < numberOfComputerPlayers; i++){
+			addPlayerOfType(PlayerType.COMPUTER);			
+		}
+		for(int i = 0; i < numberOfHumanPlayers; i++){
+			addPlayerOfType(PlayerType.HUMAN);
+		}		
+		PlayerData playerDataToRegister = new PlayerDataImpl();
+		playerDataToRegister.setPlayerName("Toz");
+		playerDataToRegister.setPlayerType(PlayerType.HUMAN);
+		blueprint.setPlayerDataToRegisister(playerDataToRegister);
 	}
 	
-	private void createNotAllPlayers(GameData gameData) {
+	public void addPlayerOfType(PlayerType playerType) {
 		PlayerData playerData = new PlayerDataImpl();
-		playerData.setPlayerType(PlayerType.HUMAN);
-		playerData.setPlayerName("Tozik");
-		gameData.addPlayer(playerData);
-		
+		 playerData.setPlayerType(playerType);
+		 blueprint.addPlayer(playerData);
 	}
 
 }

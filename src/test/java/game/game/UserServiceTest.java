@@ -21,6 +21,7 @@ import game.game.repository.GameRepository;
 import game.game.repository.GameRepositoryImpl;
 import game.game.responses.GameStatusResult;
 import game.game.responses.NewGameResponse;
+import game.game.responses.NewPlayerRegisteredResult;
 import game.game.services.PlayerService;
 import game.game.services.PlayerServiceImpl;
 import game.game.services.UserService;

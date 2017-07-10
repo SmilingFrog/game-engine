@@ -5,7 +5,6 @@ import java.util.List;
 import javax.swing.plaf.basic.BasicMenuBarUI;
 
 import game.game.Game;
-import game.game.NewPlayerRegisteredResult;
 import game.game.blueprint.GameBlueprint;
 import game.game.builder.GameBuilder;
 import game.game.builder.repository.GameBuilderRepository;
@@ -15,20 +14,21 @@ import game.game.player.builder.PlayerBuilder;
 import game.game.player.data.PlayerData;
 import game.game.repository.GameRepository;
 import game.game.responses.NewGameResponse;
+import game.game.responses.NewPlayerRegisteredResult;
 
 public class UserServiceImpl implements UserService {
 
 	GameRepository activeGamesRepository;
 	GameBuilderRepository activeGameBuilderRepository;
-	
-	public void setAcactiveGamesRepository(GameRepository repo){
+
+	public void setAcactiveGamesRepository(GameRepository repo) {
 		this.activeGamesRepository = repo;
 	}
-	
-	public void setActiveGameBuilderRepository(GameBuilderRepository repo){
+
+	public void setActiveGameBuilderRepository(GameBuilderRepository repo) {
 		this.activeGameBuilderRepository = repo;
 	}
-	
+
 	@Override
 	public NewGameResponse createGame(GameBlueprint blueprint) {
 		NewGameResponse result = null;
@@ -39,24 +39,14 @@ public class UserServiceImpl implements UserService {
 		String gameId = gameBuilder.getId();
 		NewPlayerRegisteredResult registeredPlayer = registerNewPlayer(gameId, blueprint.getPlayerDataToRegister());
 		result = new NewGameResponse();
-		if(gameBuilder.canCreateGame()){
-			Game game = gameBuilder.build();
-			activeGamesRepository.add(game);
-			activeGameBuilderRepository.remove(gameBuilder);
-			result.gameData = game.getGameData();
-			result.gameId = result.gameData.getId();
-			result.playerId = registeredPlayer.playerId;
-		}else{
-			result.gameData = gameBuilder.getGameData();
-			result.gameId = gameBuilder.getId();
-			result.playerId = registeredPlayer.playerId;
-		}
-		
+		result.gameData = registeredPlayer.gameData;
+		result.gameId = registeredPlayer.gameId;
+		result.playerId = registeredPlayer.playerId;
 		return result;
 	}
 
 	private void addPlayers(List<PlayerData> playerDataList, GameBuilder gameBuilder) {
-		for(PlayerData playerData : playerDataList){
+		for (PlayerData playerData : playerDataList) {
 			Player player = createPlayer(playerData);
 			gameBuilder.add(player);
 		}
@@ -75,17 +65,17 @@ public class UserServiceImpl implements UserService {
 	public NewPlayerRegisteredResult registerNewPlayer(String id, PlayerData playerData) {
 		NewPlayerRegisteredResult result = new NewPlayerRegisteredResult();
 		GameBuilder gameBuilder = activeGameBuilderRepository.findById(id);
-		if(theGameHasAlreadyStarted(gameBuilder)){
+		if (theGameHasAlreadyStarted(gameBuilder)) {
 			throw new RuntimeException("Can not register new player. The Game has already started!");
 		}
 		result.playerId = gameBuilder.registerPlayer(playerData);
 		result.gameId = gameBuilder.getId();
-		if(gameBuilder.canCreateGame()){
+		if (gameBuilder.canCreateGame()) {
 			Game game = gameBuilder.build();
 			activeGamesRepository.add(game);
 			result.gameData = game.getGameData();
 			activeGameBuilderRepository.remove(gameBuilder);
-		}else{
+		} else {
 			result.gameData = gameBuilder.getGameData();
 		}
 		return result;

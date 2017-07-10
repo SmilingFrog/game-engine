@@ -3,6 +3,7 @@ package game.game;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import game.game.builder.GameBuilder;
@@ -23,6 +24,7 @@ public class GameTest {
 		assertNotNull(builder);
 	}
 	
+	@Ignore
 	@Test
 	public void canCreateGameWithBuilder(){
 		Game game = builder.build();

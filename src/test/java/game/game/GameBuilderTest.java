@@ -1,9 +1,11 @@
 package game.game;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.reset;
 
 import javax.management.RuntimeErrorException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,8 +29,13 @@ public class GameBuilderTest {
 	@Before
 	public void setup(){
 		gameBuilder = Game.getGameBuilder();
+		idGenerator = Game.getGameIdGenerator();
 	}
 	
+	@After
+	public void teardown(){
+		idGenerator.reset();
+	}
 	
 	@Test
 	public void newGameBuilderEveryTime() {
