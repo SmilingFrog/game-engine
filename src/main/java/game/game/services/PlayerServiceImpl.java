@@ -1,4 +1,10 @@
-package game.game;
+package game.game.services;
+
+import game.game.Game;
+import game.game.builder.GameBuilder;
+import game.game.builder.repository.GameBuilderRepository;
+import game.game.repository.GameRepository;
+import game.game.responses.GameStatusResult;
 
 public class PlayerServiceImpl implements PlayerService {
 

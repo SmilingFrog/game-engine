@@ -1,4 +1,6 @@
-package game.game;
+package game.game.responses;
+
+import game.game.data.GameData;
 
 public class GameStatusResult {
 

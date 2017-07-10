@@ -1,4 +1,7 @@
-package game.game;
+package game.game.player;
+
+import game.game.Observer;
+import game.game.player.data.PlayerData;
 
 public interface Player extends Observer {
 

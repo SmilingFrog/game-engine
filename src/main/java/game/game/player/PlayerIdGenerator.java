@@ -1,4 +1,4 @@
-package game.game;
+package game.game.player;
 
 public interface PlayerIdGenerator {
 

@@ -3,6 +3,15 @@ package game.game;
 import java.util.ArrayList;
 import java.util.List;
 
+import game.game.builder.GameBuilder;
+import game.game.data.GameData;
+import game.game.data.GameDataImpl;
+import game.game.player.Player;
+import game.game.player.PlayerIdGenerator;
+import game.game.player.PlayerIdGeneratorImpl;
+import game.game.player.PlayerType;
+import game.game.player.data.PlayerData;
+
 public class Game {
 
 	List<Player> players;

@@ -1,5 +1,7 @@
 package game.game;
 
+import game.game.data.GameData;
+
 public class NewPlayerRegisteredResult {
 
 	public String playerId;

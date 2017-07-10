@@ -1,6 +1,8 @@
-package game.game;
+package game.game.data;
 
 import java.util.List;
+
+import game.game.player.data.PlayerData;
 
 public interface GameData {
 

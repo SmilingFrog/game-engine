@@ -1,6 +1,8 @@
-package game.game;
+package game.game.player;
 
-public class HumanPlayer extends AbstractPlayer {
+import game.game.player.data.PlayerData;
+
+public class ComputerPlayer extends AbstractPlayer {
 
 	@Override
 	public void setPlayerName(String playerName) {
@@ -23,7 +25,7 @@ public class HumanPlayer extends AbstractPlayer {
 	@Override
 	public void setPlayerId(String generateId) {
 		this.playerId = generateId;
-		playerData.setPlayerId(generateId);
+		playerData.setPlayerId(playerId);
 	}
 
 	@Override

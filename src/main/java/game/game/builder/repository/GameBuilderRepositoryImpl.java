@@ -1,7 +1,9 @@
-package game.game;
+package game.game.builder.repository;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import game.game.builder.GameBuilder;
 
 public class GameBuilderRepositoryImpl implements GameBuilderRepository {
 

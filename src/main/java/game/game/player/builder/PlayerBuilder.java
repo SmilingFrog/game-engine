@@ -1,4 +1,7 @@
-package game.game;
+package game.game.player.builder;
+
+import game.game.player.Player;
+import game.game.player.PlayerType;
 
 public interface PlayerBuilder {
 

@@ -9,25 +9,27 @@ import java.util.List;
 
 import javax.crypto.spec.PSource;
 
+import org.junit.Before;
+
 import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import game.game.AbstractPlayer;
-import game.game.GameBlueprint;
-import game.game.GameBlueprintImpl;
-import game.game.GameBuilderRepository;
-import game.game.GameBuilderRepositoryImpl;
-import game.game.GameRepository;
-import game.game.GameRepositoryImpl;
-import game.game.NewGameResponse;
-import game.game.PlayerData;
-import game.game.PlayerDataImpl;
-import game.game.PlayerType;
-import game.game.UserService;
-import game.game.UserServiceImpl;
+import game.game.blueprint.GameBlueprint;
+import game.game.blueprint.GameBlueprintImpl;
+import game.game.builder.repository.GameBuilderRepository;
+import game.game.builder.repository.GameBuilderRepositoryImpl;
+import game.game.player.AbstractPlayer;
+import game.game.player.PlayerType;
+import game.game.player.data.PlayerData;
+import game.game.player.data.PlayerDataImpl;
+import game.game.repository.GameRepository;
+import game.game.repository.GameRepositoryImpl;
+import game.game.responses.NewGameResponse;
+import game.game.services.UserService;
+import game.game.services.UserServiceImpl;
 
-public class CucumberJava {
+public class CreateGameFeatureScenario1 {
 	
 	GameBlueprint blueprint; 
 	GameRepository activeGamesRepository;
@@ -36,7 +38,7 @@ public class CucumberJava {
 	NewGameResponse response;
 	PlayerData playerDataToRegister;
 	
-	public CucumberJava() {
+	public CreateGameFeatureScenario1() {
 		blueprint = new GameBlueprintImpl();
 		activeGamesRepository = new GameRepositoryImpl();
 		activeGameBuilderRepository = new GameBuilderRepositoryImpl();
@@ -44,6 +46,11 @@ public class CucumberJava {
 		userService.setAcactiveGamesRepository(activeGamesRepository);
 		userService.setActiveGameBuilderRepository(activeGameBuilderRepository);
 		createPlayerDataToRegister();
+	}
+	
+	@Before
+	public void setup(){
+
 	}
 	
 	@Given("^The number of players in the GameBlueprint equals (\\d+)$")
@@ -96,26 +103,20 @@ public class CucumberJava {
 	
 	@When("^I provide the GameBlueprint$")
 	public void i_provide_the_GameBlueprint() throws Throwable {
-		userService.createGame(blueprint);
-		throw new PendingException();
-	}
-
-	@Then("^A new GameBuilder is created$")
-	public void a_new_GameBuilder_is_created() throws Throwable {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new PendingException();
+		response = userService.createGame(blueprint);
+		assertNotNull(response);
 	}
 
 	@Then("^Human Player is registered$")
 	public void human_Player_is_registered() throws Throwable {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new PendingException();
+		assertNotNull(response.playerId);
 	}
 
 	@Then("^NewGameCreatedResponse is returned$")
 	public void newgamecreatedresponse_is_returned() throws Throwable {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new PendingException();
+		assertNotNull(response);
+		System.out.println(response);
+		assertEquals("PLAYING", response.gameData.getStatus());
 	}
 
 }

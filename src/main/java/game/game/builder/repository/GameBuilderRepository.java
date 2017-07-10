@@ -1,4 +1,6 @@
-package game.game;
+package game.game.builder.repository;
+
+import game.game.builder.GameBuilder;
 
 public interface GameBuilderRepository {
 

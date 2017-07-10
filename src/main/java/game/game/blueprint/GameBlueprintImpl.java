@@ -1,7 +1,9 @@
-package game.game;
+package game.game.blueprint;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import game.game.player.data.PlayerData;
 
 public class GameBlueprintImpl implements GameBlueprint {
 

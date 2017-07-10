@@ -1,4 +1,6 @@
-package game.game;
+package game.game.player.data;
+
+import game.game.player.PlayerType;
 
 public interface PlayerData {
 

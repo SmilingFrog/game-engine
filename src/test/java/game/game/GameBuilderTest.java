@@ -8,6 +8,16 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import game.game.builder.GameBuilder;
+import game.game.data.GameData;
+import game.game.data.GameDataImpl;
+import game.game.player.AbstractPlayer;
+import game.game.player.Player;
+import game.game.player.PlayerType;
+import game.game.player.builder.PlayerBuilder;
+import game.game.player.data.PlayerData;
+import game.game.player.data.PlayerDataImpl;
+
 public class GameBuilderTest {
 
 	GameBuilder gameBuilder;

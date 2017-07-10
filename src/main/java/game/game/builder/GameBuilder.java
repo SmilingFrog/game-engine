@@ -1,4 +1,10 @@
-package game.game;
+package game.game.builder;
+
+import game.game.Game;
+import game.game.GameIdGenerator;
+import game.game.data.GameData;
+import game.game.player.Player;
+import game.game.player.data.PlayerData;
 
 public interface GameBuilder {
 	

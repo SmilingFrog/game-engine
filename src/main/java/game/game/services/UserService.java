@@ -1,4 +1,11 @@
-package game.game;
+package game.game.services;
+
+import game.game.NewPlayerRegisteredResult;
+import game.game.blueprint.GameBlueprint;
+import game.game.builder.repository.GameBuilderRepository;
+import game.game.player.data.PlayerData;
+import game.game.repository.GameRepository;
+import game.game.responses.NewGameResponse;
 
 public interface UserService {
 

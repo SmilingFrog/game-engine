@@ -4,6 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import game.game.player.PlayerType;
+import game.game.player.data.PlayerData;
+import game.game.player.data.PlayerDataImpl;
+
 public class PlayerDataTest {
 
 	@Test

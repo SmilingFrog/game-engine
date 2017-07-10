@@ -1,4 +1,8 @@
-package game.game;
+package game.game.player;
+
+import game.game.player.builder.PlayerBuilder;
+import game.game.player.data.PlayerData;
+import game.game.player.data.PlayerDataImpl;
 
 public abstract class AbstractPlayer implements Player{
 	String playerName;

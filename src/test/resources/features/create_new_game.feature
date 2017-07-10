@@ -23,11 +23,18 @@ Having registered a player the GameBuilder checks whether all players are regist
 If GameBuilder started building a Game, but the Game is not built yet all requests for Game status return GameBuildingResponse
 
 
-Scenario: I create a game for two players (COMPUTER and HUMAN)
+Scenario: 1. I create a game for two players (COMPUTER and HUMAN)
 Given  The number of players in the GameBlueprint equals 2
 And The PlayerType of the players is COMPUTER and HUMAN
 And GameBluePrint contains PlayerData to register HUMAN Player 
-When I provide the GameBlueprint
-Then A new GameBuilder is created 
-And Human Player is registered
+When I provide the GameBlueprint 
+Then Human Player is registered
+And NewGameCreatedResponse is returned
+
+Scenario: 2. I create a game for two players (HUMAN and HUMAN)
+Given  The number of players in the GameBlueprint equals 2
+And The PlayerType of the players is HUMAN and HUMAN
+And GameBluePrint contains PlayerData to register HUMAN Player 
+When I provide the GameBlueprint 
+Then Human Player is registered
 And NewGameCreatedResponse is returned

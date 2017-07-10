@@ -1,8 +1,20 @@
-package game.game;
+package game.game.services;
 
 import java.util.List;
 
 import javax.swing.plaf.basic.BasicMenuBarUI;
+
+import game.game.Game;
+import game.game.NewPlayerRegisteredResult;
+import game.game.blueprint.GameBlueprint;
+import game.game.builder.GameBuilder;
+import game.game.builder.repository.GameBuilderRepository;
+import game.game.player.AbstractPlayer;
+import game.game.player.Player;
+import game.game.player.builder.PlayerBuilder;
+import game.game.player.data.PlayerData;
+import game.game.repository.GameRepository;
+import game.game.responses.NewGameResponse;
 
 public class UserServiceImpl implements UserService {
 

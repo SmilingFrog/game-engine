@@ -9,6 +9,23 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import game.game.blueprint.GameBlueprint;
+import game.game.blueprint.GameBlueprintImpl;
+import game.game.builder.repository.GameBuilderRepository;
+import game.game.builder.repository.GameBuilderRepositoryImpl;
+import game.game.data.GameDataImpl;
+import game.game.player.PlayerType;
+import game.game.player.data.PlayerData;
+import game.game.player.data.PlayerDataImpl;
+import game.game.repository.GameRepository;
+import game.game.repository.GameRepositoryImpl;
+import game.game.responses.GameStatusResult;
+import game.game.responses.NewGameResponse;
+import game.game.services.PlayerService;
+import game.game.services.PlayerServiceImpl;
+import game.game.services.UserService;
+import game.game.services.UserServiceImpl;
+
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
 

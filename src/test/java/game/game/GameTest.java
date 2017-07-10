@@ -5,6 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import game.game.builder.GameBuilder;
+import game.game.builder.repository.GameBuilderRepository;
+import game.game.builder.repository.GameBuilderRepositoryImpl;
+
 public class GameTest {
 
 	GameBuilder builder;
@@ -40,10 +44,4 @@ public class GameTest {
 		assertEquals(repo.getById(builder.getId()), builder);
 	}
 	
-	
-	
-	
-	
-	
-
 }
