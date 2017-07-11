@@ -143,21 +143,21 @@ public class CreateGameFeature {
 	}
 
 	@Then("^the GameBoard\\.xDimension in the gameData of the NewGameCreatedResponse is \"(.*?)\"$")
-	public void the_GameBoard_xDimension_in_the_gameData_of_the_NewGameCreatedResponse_is(String arg1) throws Throwable {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new PendingException();
+	public void the_GameBoard_xDimension_in_the_gameData_of_the_NewGameCreatedResponse_is(String xDimension) throws Throwable {
+		int xDim = Integer.parseInt(xDimension);
+		assertEquals(xDim, response.gameData.getGameBoard().getX());
 	}
 
 	@Then("^the GameBoard\\.yDimension in the gameData of the NewGameCreatedResponse is \"(.*?)\"$")
-	public void the_GameBoard_yDimension_in_the_gameData_of_the_NewGameCreatedResponse_is(String arg1) throws Throwable {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new PendingException();
+	public void the_GameBoard_yDimension_in_the_gameData_of_the_NewGameCreatedResponse_is(String yDimension) throws Throwable {
+		int yDim = Integer.parseInt(yDimension);
+		assertEquals(yDim, response.gameData.getGameBoard().getY());
 	}
 
 	@Then("^the GameBoard\\.positions\\.size is \"(.*?)\"$")
-	public void the_GameBoard_positions_size_is(String arg1) throws Throwable {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new PendingException();
+	public void the_GameBoard_positions_size_is(String size) throws Throwable {
+		int expectedSize = Integer.parseInt(size);
+		assertEquals(expectedSize, response.gameData.getGameBoard().getPositions().size());
 	}
 
 

@@ -6,6 +6,8 @@ import java.util.List;
 import game.game.builder.GameBuilder;
 import game.game.data.GameData;
 import game.game.data.GameDataImpl;
+import game.game.data.board.GameBoard;
+import game.game.data.board.position.Position;
 import game.game.player.Player;
 import game.game.player.PlayerIdGenerator;
 import game.game.player.PlayerIdGeneratorImpl;
@@ -14,6 +16,12 @@ import game.game.player.data.PlayerData;
 
 public class Game {
 
+	static class GameSettings{
+		static int defaultXDimension = 3;
+		static int defaultYDimension = 3;
+	}
+	
+	GameBoard gameBoard;
 	List<Player> players;
 	int playersNumber;
 	String id;
@@ -26,6 +34,7 @@ public class Game {
 	
 	private static class InnerGameBuilder implements GameBuilder{
 		
+		GameBoard gameBoard;
 		List<Player> players;
 		String id;
 		int playersNumber;
@@ -49,9 +58,21 @@ public class Game {
 			game.playersNumber = this.playersNumber;
 			game.status = "PLAYING";
 			game.id = this.getId();
+			createGameBoard(game);
 			subscribePlayers();
 			game.start();
 			return game;
+		}
+
+		private void createGameBoard(Game game) {
+			List<Position> positions = new ArrayList<>();
+			for (int i = 0; i < Game.GameSettings.defaultXDimension; i++) {
+				for (int j = 0; j < Game.GameSettings.defaultXDimension; j++) {
+					positions.add(new Position(i, j));
+				}
+			}
+			game.gameBoard = new GameBoard(Game.GameSettings.defaultXDimension, 
+					Game.GameSettings.defaultXDimension, positions);
 		}
 
 		private void subscribePlayers() {
@@ -191,6 +212,7 @@ public class Game {
 		result.setId(id);
 		result.setPlayersNumber(playersNumber);
 		result.setStatus(status);
+		result.setGameBoard(gameBoard);
 		for(Player player : players){
 			PlayerData playerData = player.getPlayerData();
 			result.addPlayer(playerData);

@@ -16,4 +16,16 @@ public class GameBoard {
 		this.positions = positions;
 	}
 
+	public int getX() {
+		return xDimension;
+	}
+
+	public int getY() {
+		return yDimension;
+	}
+
+	public List<Position> getPositions() {
+		return positions;
+	}
+
 }

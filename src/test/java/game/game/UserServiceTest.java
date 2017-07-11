@@ -77,7 +77,7 @@ public class UserServiceTest {
 	public void whenNumberOfPlayersIs2AndPlayersAreHumanAndComputer() {
 		prepareBlueprint(1, 1);
 		NewGameResponse response = userService.createGame(blueprint);
-		NewGameResponse expectedGameResponse = prepareExpectedResponse();
+		NewGameResponse expectedGameResponse = prepareExpectedResponse("PLAYING");
 		assertTrue(isequal(response, expectedGameResponse));
 	}
 
@@ -107,7 +107,7 @@ public class UserServiceTest {
 		int humanPlayers = 2;
 		prepareBlueprint(computerPlayers, humanPlayers);
 		NewGameResponse response = userService.createGame(blueprint);
-		NewGameResponse expectedResponse = prepareExpectedResponse();
+		NewGameResponse expectedResponse = prepareExpectedResponse("BUILDING");
 		expectedResponse.gameData.setStatus("BUILDING");
 		assertTrue(isequal(response, expectedResponse));
 	}
@@ -118,7 +118,7 @@ public class UserServiceTest {
 		int humanPlayers = 2;
 		prepareBlueprint(computerPlayers, humanPlayers);
 		NewGameResponse response = userService.createGame(blueprint);
-		NewGameResponse expectedResponse = prepareExpectedResponse();
+		NewGameResponse expectedResponse = prepareExpectedResponse("BUILDING");
 		expectedResponse.gameData.setStatus("BUILDING");
 		assertTrue(isequal(response, expectedResponse));
 		String id = response.gameId;
@@ -147,29 +147,38 @@ public class UserServiceTest {
 		gameStatus = userService.registerNewPlayer(id, playerData);
 	}
 
-	private NewGameResponse prepareExpectedResponse() {
+	private NewGameResponse prepareExpectedResponse(String gameStatus) {
 		NewGameResponse expectedResponse = new NewGameResponse();
 		expectedResponse.gameId = "1";
 		expectedResponse.gameData = new GameDataImpl();
-		expectedResponse.gameData.setStatus("PLAYING");
-		int xDimension = 3;
-		int yDimension = 3;
-		List<Position> positions = new ArrayList<Position>();
-		for (int i = 0; i < xDimension; i++) {
-			for (int j = 0; j < yDimension; j++) {
-				positions.add(new Position(i, j));
+		expectedResponse.gameData.setStatus(gameStatus);
+		if (gameStatus.equals("PLAYING")) {
+			int xDimension = 3;
+			int yDimension = 3;
+			List<Position> positions = new ArrayList<Position>();
+			for (int i = 0; i < xDimension; i++) {
+				for (int j = 0; j < yDimension; j++) {
+					positions.add(new Position(i, j));
+				}
 			}
+			GameBoard gameBoard = new GameBoard(xDimension, yDimension, positions);
+			expectedResponse.gameData.setGameBoard(gameBoard);
 		}
-		GameBoard gameBoard = new GameBoard(xDimension, yDimension, positions);
-		expectedResponse.gameData.setGameBoard(gameBoard);
-		PlayerData playerData = new PlayerDataImpl();
 		return expectedResponse;
 	}
 
 	private boolean isequal(NewGameResponse response, NewGameResponse expectedResponse) {
-		return response.gameId.equals(expectedResponse.gameId)
+		boolean result = response.gameId.equals(expectedResponse.gameId)
 				&& response.gameData.getStatus().equals(expectedResponse.gameData.getStatus());
-
+		if(response.gameData.getStatus().equals(expectedResponse.gameData.getStatus()) &&
+				expectedResponse.gameData.getStatus().equals("PLAYING")){
+			boolean isGameBoardEqual = response.gameData.getGameBoard() != null;
+			isGameBoardEqual = isGameBoardEqual && response.gameData.getGameBoard().getX() == 3;
+			isGameBoardEqual = isGameBoardEqual && response.gameData.getGameBoard().getY() == 3;
+			isGameBoardEqual = isGameBoardEqual && response.gameData.getGameBoard().getPositions().size() == 9;
+			result = result && isGameBoardEqual;
+		}
+		return result;
 	}
 
 }
