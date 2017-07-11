@@ -3,6 +3,7 @@ package game.game;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,16 @@ public class UserServiceTest {
 	@Before
 	public void setup(){
 		setDependencies();
+		Game.getGameIdGenerator().reset();
+	}
+	
+	@After
+	public void cleanup(){
+		gameRepository = null;
+		gameBuilderRepository = null;
+		userService = null;
+		playerService = null;
+		blueprint = null;
 	}
 
 	public void setDependencies() {
@@ -62,9 +73,7 @@ public class UserServiceTest {
 		prepareBlueprint(1,1);
 		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedGameResponse = prepareExpectedResponse();
-		System.out.println(response);
 		assertTrue(isequal(response, expectedGameResponse));
-		Game.getGameIdGenerator().reset();
 	}
 	
 	public void prepareBlueprint(int numberOfComputerPlayers, int numberOfHumanPlayers) {
@@ -92,15 +101,10 @@ public class UserServiceTest {
 		int computerPlayers = 1;
 		int humanPlayers = 2;
 		prepareBlueprint(computerPlayers, humanPlayers);
-		Game.getGameIdGenerator().reset();
 		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedResponse = prepareExpectedResponse();
 		expectedResponse.gameData.setStatus("BUILDING");
-		System.out.println(response);
-		System.out.println(response.gameId + "  " + expectedResponse.gameId);
-		System.out.println(response.gameData.getStatus() + " " + expectedResponse.gameData.getStatus());
 		assertTrue(isequal(response, expectedResponse));
-		Game.getGameIdGenerator().reset();
 	}
 	
 	@Test
@@ -108,27 +112,20 @@ public class UserServiceTest {
 		int computerPlayers = 1;
 		int humanPlayers = 2;
 		prepareBlueprint(computerPlayers, humanPlayers);
-		Game.getGameIdGenerator().reset();
 		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedResponse = prepareExpectedResponse();
 		expectedResponse.gameData.setStatus("BUILDING");
-		System.out.println(response);
-		System.out.println(response.gameId + "  " + expectedResponse.gameId);
-		System.out.println(response.gameData.getStatus() + " " + expectedResponse.gameData.getStatus());
 		assertTrue(isequal(response, expectedResponse));
 		String id = response.gameId;
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerName("Vasya");
 		playerData.setPlayerType(PlayerType.HUMAN);
 		NewPlayerRegisteredResult gameStatus = userService.registerNewPlayer(id, playerData);
-		System.out.println(gameStatus);
 		assertEquals(gameStatus.gameId, "1");
 		assertEquals(gameStatus.gameData.getStatus(), "PLAYING");
 		GameStatusResult gameStatusResult = playerService.getGameStatus(id);
-		System.out.println(gameStatusResult);
 		assertEquals(gameStatusResult.gameId, "1");
 		assertEquals(gameStatusResult.gameData.getStatus(), "PLAYING");
-		Game.getGameIdGenerator().reset();
 	}
 	
 	@Test(expected = RuntimeException.class)
@@ -143,7 +140,6 @@ public class UserServiceTest {
 		playerData.setPlayerType(PlayerType.HUMAN);
 		NewPlayerRegisteredResult gameStatus;
 		gameStatus = userService.registerNewPlayer(id, playerData);
-		Game.getGameIdGenerator().reset();
 	}
 	
 

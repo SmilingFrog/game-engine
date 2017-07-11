@@ -31,18 +31,25 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public NewGameResponse createGame(GameBlueprint blueprint) {
-		NewGameResponse result = null;
 		GameBuilder gameBuilder = Game.getGameBuilder();
-		activeGameBuilderRepository.add(gameBuilder);
 		addPlayers(blueprint.getPlayersData(), gameBuilder);
 		gameBuilder.setPlayersNumber(blueprint.getPlayersNumber());
-		String gameId = gameBuilder.getId();
-		NewPlayerRegisteredResult registeredPlayer = registerNewPlayer(gameId, blueprint.getPlayerDataToRegister());
-		result = new NewGameResponse();
+		activeGameBuilderRepository.add(gameBuilder);
+		NewPlayerRegisteredResult registeredPlayer = registerPlayer(blueprint, gameBuilder);
+		NewGameResponse result = new NewGameResponse();
+		fillResult(registeredPlayer, result);
+		return result;
+	}
+
+	private void fillResult(NewPlayerRegisteredResult registeredPlayer, NewGameResponse result) {
 		result.gameData = registeredPlayer.gameData;
 		result.gameId = registeredPlayer.gameId;
 		result.playerId = registeredPlayer.playerId;
-		return result;
+	}
+
+	private NewPlayerRegisteredResult registerPlayer(GameBlueprint blueprint, GameBuilder gameBuilder) {
+		String gameId = gameBuilder.getId();
+		return registerNewPlayer(gameId, blueprint.getPlayerDataToRegister());
 	}
 
 	private void addPlayers(List<PlayerData> playerDataList, GameBuilder gameBuilder) {
