@@ -26,4 +26,6 @@ public interface GameData {
 
 	GameBoard getGameBoard();
 
+	void setGameBoard(GameBoard gameBoard);
+
 }

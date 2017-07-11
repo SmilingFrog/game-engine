@@ -30,6 +30,10 @@ And GameBluePrint contains PlayerData to register HUMAN Player
 When I provide the GameBlueprint 
 Then Human Player is registered
 And NewGameCreatedResponse is returned with gameId playerId and gameStatus "PLAYING"
+And the GameBoard in the gameData of the NewGameCreatedResponse is not null
+And the GameBoard.xDimension in the gameData of the NewGameCreatedResponse is "3"
+And the GameBoard.yDimension in the gameData of the NewGameCreatedResponse is "3"
+And the GameBoard.positions.size is "9"
 
 Scenario: 2. I create a game for two players (HUMAN and HUMAN)
 Given  The PlayerType of the players is HUMAN and HUMAN

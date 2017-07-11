@@ -20,6 +20,7 @@ import game.game.blueprint.GameBlueprint;
 import game.game.blueprint.GameBlueprintImpl;
 import game.game.builder.repository.GameBuilderRepository;
 import game.game.builder.repository.GameBuilderRepositoryImpl;
+import game.game.data.board.GameBoard;
 import game.game.player.AbstractPlayer;
 import game.game.player.PlayerType;
 import game.game.player.data.PlayerData;
@@ -38,6 +39,7 @@ public class CreateGameFeature {
 	UserService userService;
 	NewGameResponse response;
 	PlayerData playerDataToRegister;
+	GameBoard gameBoard;
 	
 	public CreateGameFeature() {
 		
@@ -133,6 +135,29 @@ public class CreateGameFeature {
 	@Then("^the GameBoard in the gameData of the NewGameCreatedResponse is null$")
 	public void the_GameBoard_in_the_gameData_of_the_NewGameCreatedResponse_is_null() throws Throwable {
 		assertNull(response.gameData.getGameBoard());
+	}
+
+	@Then("^the GameBoard in the gameData of the NewGameCreatedResponse is not null$")
+	public void the_GameBoard_in_the_gameData_of_the_NewGameCreatedResponse_is_not_null() throws Throwable {
+		assertNotNull(response.gameData.getGameBoard());
+	}
+
+	@Then("^the GameBoard\\.xDimension in the gameData of the NewGameCreatedResponse is \"(.*?)\"$")
+	public void the_GameBoard_xDimension_in_the_gameData_of_the_NewGameCreatedResponse_is(String arg1) throws Throwable {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new PendingException();
+	}
+
+	@Then("^the GameBoard\\.yDimension in the gameData of the NewGameCreatedResponse is \"(.*?)\"$")
+	public void the_GameBoard_yDimension_in_the_gameData_of_the_NewGameCreatedResponse_is(String arg1) throws Throwable {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new PendingException();
+	}
+
+	@Then("^the GameBoard\\.positions\\.size is \"(.*?)\"$")
+	public void the_GameBoard_positions_size_is(String arg1) throws Throwable {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new PendingException();
 	}
 
 

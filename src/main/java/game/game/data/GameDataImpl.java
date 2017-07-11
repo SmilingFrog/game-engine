@@ -63,4 +63,9 @@ public class GameDataImpl implements GameData {
 		return gameBoard;
 	}
 
+	@Override
+	public void setGameBoard(GameBoard gameBoard) {
+		this.gameBoard = gameBoard;
+	}
+
 }

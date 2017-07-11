@@ -3,6 +3,9 @@ package game.game;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +18,8 @@ import game.game.blueprint.GameBlueprintImpl;
 import game.game.builder.repository.GameBuilderRepository;
 import game.game.builder.repository.GameBuilderRepositoryImpl;
 import game.game.data.GameDataImpl;
+import game.game.data.board.GameBoard;
+import game.game.data.board.position.Position;
 import game.game.player.PlayerType;
 import game.game.player.data.PlayerData;
 import game.game.player.data.PlayerDataImpl;
@@ -32,23 +37,23 @@ import game.game.services.UserServiceImpl;
 public class UserServiceTest {
 
 	UserService userService;
-	
+
 	GameBlueprint blueprint;
-	
+
 	GameRepository gameRepository;
-	
+
 	GameBuilderRepository gameBuilderRepository;
-	
+
 	PlayerService playerService;
 
 	@Before
-	public void setup(){
+	public void setup() {
 		setDependencies();
 		Game.getGameIdGenerator().reset();
 	}
-	
+
 	@After
-	public void cleanup(){
+	public void cleanup() {
 		gameRepository = null;
 		gameBuilderRepository = null;
 		userService = null;
@@ -67,35 +72,35 @@ public class UserServiceTest {
 		playerService.setActiveGameBuilderRepository(gameBuilderRepository);
 		blueprint = new GameBlueprintImpl();
 	}
-	
+
 	@Test
 	public void whenNumberOfPlayersIs2AndPlayersAreHumanAndComputer() {
-		prepareBlueprint(1,1);
+		prepareBlueprint(1, 1);
 		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedGameResponse = prepareExpectedResponse();
 		assertTrue(isequal(response, expectedGameResponse));
 	}
-	
+
 	public void prepareBlueprint(int numberOfComputerPlayers, int numberOfHumanPlayers) {
 		blueprint.setPlayersNumber(numberOfComputerPlayers + numberOfHumanPlayers);
-		for(int i = 0; i < numberOfComputerPlayers; i++){
-			addPlayerOfType(PlayerType.COMPUTER);			
+		for (int i = 0; i < numberOfComputerPlayers; i++) {
+			addPlayerOfType(PlayerType.COMPUTER);
 		}
-		for(int i = 0; i < numberOfHumanPlayers; i++){
+		for (int i = 0; i < numberOfHumanPlayers; i++) {
 			addPlayerOfType(PlayerType.HUMAN);
-		}		
+		}
 		PlayerData playerDataToRegister = new PlayerDataImpl();
 		playerDataToRegister.setPlayerName("Toz");
 		playerDataToRegister.setPlayerType(PlayerType.HUMAN);
 		blueprint.setPlayerDataToRegisister(playerDataToRegister);
 	}
-	
+
 	public void addPlayerOfType(PlayerType playerType) {
 		PlayerData playerData = new PlayerDataImpl();
-		 playerData.setPlayerType(playerType);
-		 blueprint.addPlayer(playerData);
+		playerData.setPlayerType(playerType);
+		blueprint.addPlayer(playerData);
 	}
-	
+
 	@Test
 	public void whenNotAllPlayersAreSetInGameDataReturnNewGameStatusBuilding() {
 		int computerPlayers = 1;
@@ -106,7 +111,7 @@ public class UserServiceTest {
 		expectedResponse.gameData.setStatus("BUILDING");
 		assertTrue(isequal(response, expectedResponse));
 	}
-	
+
 	@Test
 	public void whenAddingAPlayerSoThatAllPlayersAreRegisteredReturnGameStatusPlaying() {
 		int computerPlayers = 1;
@@ -127,9 +132,9 @@ public class UserServiceTest {
 		assertEquals(gameStatusResult.gameId, "1");
 		assertEquals(gameStatusResult.gameData.getStatus(), "PLAYING");
 	}
-	
+
 	@Test(expected = RuntimeException.class)
-	public void whenTryingToRegisterNewUserToTheGameThatHasAlreadyStartedThrowException(){
+	public void whenTryingToRegisterNewUserToTheGameThatHasAlreadyStartedThrowException() {
 		int computerPlayers = 1;
 		int humanPlayers = 1;
 		prepareBlueprint(computerPlayers, humanPlayers);
@@ -141,21 +146,30 @@ public class UserServiceTest {
 		NewPlayerRegisteredResult gameStatus;
 		gameStatus = userService.registerNewPlayer(id, playerData);
 	}
-	
 
 	private NewGameResponse prepareExpectedResponse() {
 		NewGameResponse expectedResponse = new NewGameResponse();
 		expectedResponse.gameId = "1";
 		expectedResponse.gameData = new GameDataImpl();
 		expectedResponse.gameData.setStatus("PLAYING");
+		int xDimension = 3;
+		int yDimension = 3;
+		List<Position> positions = new ArrayList<Position>();
+		for (int i = 0; i < xDimension; i++) {
+			for (int j = 0; j < yDimension; j++) {
+				positions.add(new Position(i, j));
+			}
+		}
+		GameBoard gameBoard = new GameBoard(xDimension, yDimension, positions);
+		expectedResponse.gameData.setGameBoard(gameBoard);
 		PlayerData playerData = new PlayerDataImpl();
 		return expectedResponse;
 	}
-	
+
 	private boolean isequal(NewGameResponse response, NewGameResponse expectedResponse) {
-		return response.gameId.equals(expectedResponse.gameId) &&
-				response.gameData.getStatus().equals(expectedResponse.gameData.getStatus());
-				
+		return response.gameId.equals(expectedResponse.gameId)
+				&& response.gameData.getStatus().equals(expectedResponse.gameData.getStatus());
+
 	}
 
 }
