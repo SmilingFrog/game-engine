@@ -24,17 +24,17 @@ If GameBuilder started building a Game, but the Game is not built yet all reques
 
 
 Scenario: 1. I create a game for two players (COMPUTER and HUMAN)
-Given  The number of players in the GameBlueprint equals 2
-And The PlayerType of the players is COMPUTER and HUMAN
+Given  The PlayerType of the players is COMPUTER and HUMAN
+And The number of players in the GameBlueprint equals 2
 And GameBluePrint contains PlayerData to register HUMAN Player 
 When I provide the GameBlueprint 
 Then Human Player is registered
-And NewGameCreatedResponse is returned
+And NewGameCreatedResponse is returned with gameId playerId and gameStatus "PLAYING"
 
 Scenario: 2. I create a game for two players (HUMAN and HUMAN)
-Given  The number of players in the GameBlueprint equals 2
-And The PlayerType of the players is HUMAN and HUMAN
+Given  The PlayerType of the players is HUMAN and HUMAN
+And The number of players in the GameBlueprint equals 2
 And GameBluePrint contains PlayerData to register HUMAN Player 
 When I provide the GameBlueprint 
 Then Human Player is registered
-And NewGameCreatedResponse is returned
+And NewGameCreatedResponse is returned with gameId playerId and gameStatus "BUILDING"

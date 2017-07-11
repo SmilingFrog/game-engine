@@ -29,7 +29,7 @@ import game.game.responses.NewGameResponse;
 import game.game.services.UserService;
 import game.game.services.UserServiceImpl;
 
-public class CreateGameFeatureScenario1 {
+public class CreateGameFeature {
 	
 	GameBlueprint blueprint; 
 	GameRepository activeGamesRepository;
@@ -38,31 +38,20 @@ public class CreateGameFeatureScenario1 {
 	NewGameResponse response;
 	PlayerData playerDataToRegister;
 	
-	public CreateGameFeatureScenario1() {
-		blueprint = new GameBlueprintImpl();
-		activeGamesRepository = new GameRepositoryImpl();
-		activeGameBuilderRepository = new GameBuilderRepositoryImpl();
-		userService = new UserServiceImpl();
-		userService.setAcactiveGamesRepository(activeGamesRepository);
-		userService.setActiveGameBuilderRepository(activeGameBuilderRepository);
-		createPlayerDataToRegister();
-	}
-	
-	@Before
-	public void setup(){
-
+	public CreateGameFeature() {
+		
 	}
 	
 	@Given("^The number of players in the GameBlueprint equals (\\d+)$")
 	public void the_number_of_players_in_the_GameBlueprint_equals(int expectedNumberOfGamePlayers) throws Throwable {
-		prepareBlueprint();
 		assertEquals(expectedNumberOfGamePlayers, blueprint.getPlayersNumber());
 	}
 
-	public void prepareBlueprint() {
-		blueprint.setPlayersNumber(2);
-		 addPlayerOfType(PlayerType.COMPUTER);
-		 addPlayerOfType(PlayerType.HUMAN);
+	public void prepareBlueprint(PlayerType... playerTypes) {
+		blueprint.setPlayersNumber(playerTypes.length);
+		for(PlayerType pt : playerTypes){
+			addPlayerOfType(pt);
+		}
 		 blueprint.setPlayerDataToRegisister(playerDataToRegister);
 	}
 
@@ -74,8 +63,21 @@ public class CreateGameFeatureScenario1 {
 
 	@Given("^The PlayerType of the players is COMPUTER and HUMAN$")
 	public void the_PlayerType_of_the_players_is_COMPUTER_and_HUMAN() throws Throwable {
-	    assertTrue(existsPlayerOfType(PlayerType.COMPUTER));
+		setup();
+		prepareBlueprint(PlayerType.COMPUTER, PlayerType.HUMAN);
+		assertTrue(existsPlayerOfType(PlayerType.COMPUTER));
 	    assertTrue(existsPlayerOfType(PlayerType.HUMAN));
+	    assertEquals(2, blueprint.getPlayersNumber());
+	}
+
+	private void setup() {
+		blueprint = new GameBlueprintImpl();
+		activeGamesRepository = new GameRepositoryImpl();
+		activeGameBuilderRepository = new GameBuilderRepositoryImpl();
+		userService = new UserServiceImpl();
+		userService.setAcactiveGamesRepository(activeGamesRepository);
+		userService.setActiveGameBuilderRepository(activeGameBuilderRepository);
+		createPlayerDataToRegister();
 	}
 
 	private boolean existsPlayerOfType(PlayerType playerType) {
@@ -111,12 +113,20 @@ public class CreateGameFeatureScenario1 {
 	public void human_Player_is_registered() throws Throwable {
 		assertNotNull(response.playerId);
 	}
-
-	@Then("^NewGameCreatedResponse is returned$")
-	public void newgamecreatedresponse_is_returned() throws Throwable {
+	
+	@Then("^NewGameCreatedResponse is returned with gameId playerId and gameStatus \"(.*?)\"$")
+	public void newgamecreatedresponse_is_returned_with_gameId_playerId_and_gameStatus(String gameStatus) throws Throwable {
 		assertNotNull(response);
-		System.out.println(response);
-		assertEquals("PLAYING", response.gameData.getStatus());
+		assertEquals(gameStatus, response.gameData.getStatus());
+	}
+	
+	@Given("^The PlayerType of the players is HUMAN and HUMAN$")
+	public void the_PlayerType_of_the_players_is_HUMAN_and_HUMAN() throws Throwable {
+		setup();
+		prepareBlueprint(PlayerType.HUMAN, PlayerType.HUMAN);
+	    assertTrue(existsPlayerOfType(PlayerType.HUMAN));
+	    assertTrue(!existsPlayerOfType(PlayerType.COMPUTER));
+	    assertEquals(2, blueprint.getPlayersNumber());
 	}
 
 }
