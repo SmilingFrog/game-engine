@@ -19,6 +19,7 @@ import game.game.repository.GameRepository;
 import game.game.repository.GameRepositoryImpl;
 import game.game.responses.GameStatusResult;
 import game.game.responses.NewGameResponse;
+import game.game.responses.NewPlayerRegisteredResult;
 import game.game.services.PlayerService;
 import game.game.services.PlayerServiceImpl;
 import game.game.services.UserService;
@@ -101,5 +102,26 @@ public class GetGameStatusFeature {
 	public void the_player_gets_game_status_result_with_the_game_status(String status) throws Throwable {
 		assertEquals(status, gameStatus.gameData.getStatus());
 	}
+	
+	@Given("^a game for the players of type \"(.*?)\" and \"(.*?)\" is in the process of playing$")
+	public void a_game_for_the_players_of_type_and_is_in_the_process_of_playing(String player1, String player2) throws Throwable {
+		setup();
+		gameId = startBuildingGame();
+		assertNotNull(gameId);
+		assertEquals(player1, response.gameData.getPlayerDataList().get(0).getPlayerType().toString());
+		assertEquals(player2, response.gameData.getPlayerDataList().get(1).getPlayerType().toString());
+		assertEquals(2, response.gameData.getPlayerDataList().size());
+		registerSecondPlayer();
+	}
+
+	private void registerSecondPlayer() {
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerName("Vasya");
+		playerData.setPlayerType(PlayerType.HUMAN);
+		NewPlayerRegisteredResult newPlayerRegisteredResponse = userService.registerNewPlayer(gameId, playerData);
+		gameId = newPlayerRegisteredResponse.gameId;
+	}
+
+
 
 }
