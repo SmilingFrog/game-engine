@@ -2,6 +2,7 @@ package step_definitions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.intThat;
 
@@ -128,5 +129,11 @@ public class CreateGameFeature {
 	    assertTrue(!existsPlayerOfType(PlayerType.COMPUTER));
 	    assertEquals(2, blueprint.getPlayersNumber());
 	}
+	
+	@Then("^the GameBoard in the gameData of the NewGameCreatedResponse is null$")
+	public void the_GameBoard_in_the_gameData_of_the_NewGameCreatedResponse_is_null() throws Throwable {
+		assertNull(response.gameData.getGameBoard());
+	}
+
 
 }

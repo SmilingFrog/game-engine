@@ -38,3 +38,4 @@ And GameBluePrint contains PlayerData to register HUMAN Player
 When I provide the GameBlueprint 
 Then Human Player is registered
 And NewGameCreatedResponse is returned with gameId playerId and gameStatus "BUILDING"
+And the GameBoard in the gameData of the NewGameCreatedResponse is null

@@ -2,6 +2,7 @@ package game.game.data;
 
 import java.util.List;
 
+import game.game.data.board.GameBoard;
 import game.game.player.data.PlayerData;
 
 public interface GameData {
@@ -22,5 +23,7 @@ public interface GameData {
 	List<PlayerData> getPlayerDataList();
 
 	int getPlayersNumber();
+
+	GameBoard getGameBoard();
 
 }
