@@ -8,6 +8,7 @@ import game.game.data.GameData;
 import game.game.data.GameDataImpl;
 import game.game.data.board.GameBoard;
 import game.game.data.board.position.Position;
+import game.game.player.ComputerPlayer;
 import game.game.player.Player;
 import game.game.player.PlayerIdGenerator;
 import game.game.player.PlayerIdGeneratorImpl;
@@ -85,6 +86,7 @@ public class Game {
 			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
 				String playerId = playerIdGenerator.generateId();
 				player.setPlayerId(playerId);
+				((ComputerPlayer)player).setGameId(id);
 			}
 			this.players.add(player);
 		}
