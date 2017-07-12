@@ -1,10 +1,12 @@
 package game.game.player;
 
+import game.game.Game;
 import game.game.player.data.PlayerData;
 
 public class ComputerPlayer extends AbstractPlayer {
 
 	String gameId;
+	Game game;
 	
 	@Override
 	public void setPlayerName(String playerName) {
@@ -37,6 +39,10 @@ public class ComputerPlayer extends AbstractPlayer {
 
 	public void setGameId(String id) {
 		this.gameId = id;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 }

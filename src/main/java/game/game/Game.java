@@ -64,9 +64,18 @@ public class Game {
 			game.status = "PLAYING";
 			game.id = this.getId();
 			createGameBoard(game);
+			injectGameIntoAllComputerPlayers(game);
 			subscribePlayers(game);
 			game.start();
 			return game;
+		}
+
+		private void injectGameIntoAllComputerPlayers(Game game) {
+			for(Player player : game.players){
+				if(player.getPlayerData().getPlayerType() == PlayerType.COMPUTER){
+					((ComputerPlayer)player).setGame(game);
+				}
+			}
 		}
 
 		private void createGameBoard(Game game) {
@@ -81,7 +90,7 @@ public class Game {
 		}
 
 		private void subscribePlayers(Game game) {
-			for(Player player : players){
+			for(Player player : game.players){
 				if(player.getPlayerData().getPlayerType() == PlayerType.COMPUTER){
 					game.subscribedPlayers.add(player);
 				}
