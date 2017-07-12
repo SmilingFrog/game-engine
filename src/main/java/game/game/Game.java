@@ -2,6 +2,7 @@ package game.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import game.game.builder.GameBuilder;
 import game.game.data.GameData;
@@ -28,9 +29,12 @@ public class Game {
 	String id;
 	String status;
 	Player nextMovePlayer;
+	List<Player> subscribedPlayers = null;
+	
 	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
 	
 	private Game(){
+		subscribedPlayers = new ArrayList<>();
 	}
 	
 	private static class InnerGameBuilder implements GameBuilder{
@@ -60,7 +64,7 @@ public class Game {
 			game.status = "PLAYING";
 			game.id = this.getId();
 			createGameBoard(game);
-			subscribePlayers();
+			subscribePlayers(game);
 			game.start();
 			return game;
 		}
@@ -76,8 +80,12 @@ public class Game {
 					Game.GameSettings.defaultXDimension, positions);
 		}
 
-		private void subscribePlayers() {
-			
+		private void subscribePlayers(Game game) {
+			for(Player player : players){
+				if(player.getPlayerData().getPlayerType() == PlayerType.COMPUTER){
+					game.subscribedPlayers.add(player);
+				}
+			}
 		}
 
 		@Override
@@ -184,30 +192,33 @@ public class Game {
 	}
 
 	public void start() {
-		nextMovePlayer = defineThePlayerToMakeNextMove();
+		nextMovePlayer = defineThePlayerToMakeFirstMove();
 		informSubscribedPlayers();
 	}
 
+	private Player defineThePlayerToMakeFirstMove() {
+		Random rnd = new Random();
+		int indexOfPlayer = rnd.nextInt(players.size());
+		indexOfNextPlayerToMakeAMove = indexOfPlayer;
+		return players.get(indexOfPlayer);
+	}
+
 	private void informSubscribedPlayers() {
-		for(Player player : players){
+		for(Player player : subscribedPlayers){
 			player.statusChanged();
 		}
 	}
+	
+	private static int indexOfNextPlayerToMakeAMove = 0;
 
-	private Player defineThePlayerToMakeNextMove() {
-		int index = Game.getNextIndex(players.size());
-		String id = index + "";
-		return null;
-	}
-	
 	private static int getNextIndex(int size){
-		if(index >= size){
-			index = 0;
+		if(indexOfNextPlayerToMakeAMove >= size){
+			indexOfNextPlayerToMakeAMove = 0;
+			return indexOfNextPlayerToMakeAMove;
 		}
-		return index++;
+		return indexOfNextPlayerToMakeAMove++;
 	}
 	
-	private static int index = 0;
 
 	public GameData getGameData() {
 		GameData result = new GameDataImpl();
