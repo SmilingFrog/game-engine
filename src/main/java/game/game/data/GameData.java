@@ -3,6 +3,7 @@ package game.game.data;
 import java.util.List;
 
 import game.game.data.board.GameBoard;
+import game.game.player.Player;
 import game.game.player.data.PlayerData;
 
 public interface GameData {
@@ -27,5 +28,9 @@ public interface GameData {
 	GameBoard getGameBoard();
 
 	void setGameBoard(GameBoard gameBoard);
+
+	PlayerData getNextPlayer();
+
+	void setNextPlayer(Player nextMovePlayer);
 
 }

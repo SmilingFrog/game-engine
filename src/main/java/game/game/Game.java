@@ -18,11 +18,11 @@ import game.game.player.data.PlayerData;
 
 public class Game {
 
-	static class GameSettings{
+	static class GameSettings {
 		static int defaultXDimension = 3;
 		static int defaultYDimension = 3;
 	}
-	
+
 	GameBoard gameBoard;
 	List<Player> players;
 	int playersNumber;
@@ -30,15 +30,15 @@ public class Game {
 	String status;
 	Player nextMovePlayer;
 	List<Player> subscribedPlayers = null;
-	
+
 	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
-	
-	private Game(){
+
+	private Game() {
 		subscribedPlayers = new ArrayList<>();
 	}
-	
-	private static class InnerGameBuilder implements GameBuilder{
-		
+
+	private static class InnerGameBuilder implements GameBuilder {
+
 		GameBoard gameBoard;
 		List<Player> players;
 		String id;
@@ -46,16 +46,16 @@ public class Game {
 		String status;
 		GameIdGenerator idGenerator;
 		PlayerIdGenerator playerIdGenerator;
-		
+
 		public InnerGameBuilder() {
 			players = new ArrayList<>();
 			this.status = "BUILDING";
 			playerIdGenerator = new PlayerIdGeneratorImpl();
 		}
-		
+
 		@Override
 		public Game build() {
-			if(!canCreateGame()){
+			if (!canCreateGame()) {
 				throw new CantCreateGameException();
 			}
 			Game game = new Game();
@@ -71,9 +71,9 @@ public class Game {
 		}
 
 		private void injectGameIntoAllComputerPlayers(Game game) {
-			for(Player player : game.players){
-				if(player.getPlayerData().getPlayerType() == PlayerType.COMPUTER){
-					((ComputerPlayer)player).setGame(game);
+			for (Player player : game.players) {
+				if (player.getPlayerData().getPlayerType() == PlayerType.COMPUTER) {
+					((ComputerPlayer) player).setGame(game);
 				}
 			}
 		}
@@ -85,13 +85,13 @@ public class Game {
 					positions.add(new Position(i, j));
 				}
 			}
-			game.gameBoard = new GameBoard(Game.GameSettings.defaultXDimension, 
-					Game.GameSettings.defaultXDimension, positions);
+			game.gameBoard = new GameBoard(Game.GameSettings.defaultXDimension, Game.GameSettings.defaultXDimension,
+					positions);
 		}
 
 		private void subscribePlayers(Game game) {
-			for(Player player : game.players){
-				if(player.getPlayerData().getPlayerType() == PlayerType.COMPUTER){
+			for (Player player : game.players) {
+				if (player.getPlayerData().getPlayerType() == PlayerType.COMPUTER) {
 					game.subscribedPlayers.add(player);
 				}
 			}
@@ -100,10 +100,10 @@ public class Game {
 		@Override
 		public void add(Player player) {
 			PlayerData playerData = player.getPlayerData();
-			if(playerData.getPlayerType().equals(PlayerType.COMPUTER)){
+			if (playerData.getPlayerType().equals(PlayerType.COMPUTER)) {
 				String playerId = playerIdGenerator.generateId();
 				player.setPlayerId(playerId);
-				((ComputerPlayer)player).setGameId(id);
+				((ComputerPlayer) player).setGameId(id);
 			}
 			this.players.add(player);
 		}
@@ -115,7 +115,7 @@ public class Game {
 
 		@Override
 		public String getId() {
-			if(id == null && idGenerator != null){
+			if (id == null && idGenerator != null) {
 				id = idGenerator.generateId();
 			}
 			return id;
@@ -124,9 +124,7 @@ public class Game {
 		@Override
 		public boolean canCreateGame() {
 			boolean result = false;
-			if(playersNumber == players.size() && 
-					atLeastOnePlayerIsOfTypeHuman() &&
-					allPlayersHaveIds()){
+			if (playersNumber == players.size() && atLeastOnePlayerIsOfTypeHuman() && allPlayersHaveIds()) {
 				result = true;
 			}
 			return result;
@@ -134,23 +132,23 @@ public class Game {
 
 		private boolean allPlayersHaveIds() {
 			boolean result = true;
-			
-			for(Player player : players){
+
+			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
-				String playerId = playerData.getPlayerId(); 
-				if(playerId == null){
+				String playerId = playerData.getPlayerId();
+				if (playerId == null) {
 					result = false;
 				}
 			}
-			
+
 			return result;
 		}
 
 		private boolean atLeastOnePlayerIsOfTypeHuman() {
 			boolean result = false;
-			for(Player player : players){
+			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
-				if(playerData.getPlayerType().equals(PlayerType.HUMAN)){
+				if (playerData.getPlayerType().equals(PlayerType.HUMAN)) {
 					result = true;
 				}
 			}
@@ -163,7 +161,7 @@ public class Game {
 			gameData.setId(id);
 			gameData.setPlayersNumber(playersNumber);
 			gameData.setStatus(status);
-			for(Player player : players){
+			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
 				gameData.addPlayer(playerData);
 			}
@@ -179,10 +177,9 @@ public class Game {
 		@Override
 		public String registerPlayer(PlayerData playerToRegister) {
 			String playerId = null;
-			for(Player player : players){
+			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
-				if(playerData.getPlayerType().equals(PlayerType.HUMAN) &&
-						playerData.getPlayerId() == null){
+				if (playerData.getPlayerType().equals(PlayerType.HUMAN) && playerData.getPlayerId() == null) {
 					player.setPlayerName(playerToRegister.getPlayerName());
 					playerId = playerIdGenerator.generateId();
 					player.setPlayerId(playerId);
@@ -191,9 +188,9 @@ public class Game {
 			}
 			return playerId;
 		}
-		
+
 	}
-	
+
 	public static GameBuilder getGameBuilder() {
 		GameBuilder builder = new InnerGameBuilder();
 		builder.setIdGenerator(Game.getGameIdGenerator());
@@ -213,21 +210,25 @@ public class Game {
 	}
 
 	private void informSubscribedPlayers() {
-		for(Player player : subscribedPlayers){
+		for (Player player : subscribedPlayers) {
 			player.statusChanged();
 		}
 	}
-	
+
 	private static int indexOfNextPlayerToMakeAMove = 0;
 
-	private static int getNextIndex(int size){
-		if(indexOfNextPlayerToMakeAMove >= size){
+	private static void getNextIndex(int size) {
+		// if(indexOfNextPlayerToMakeAMove >= size){
+		// indexOfNextPlayerToMakeAMove = 0;
+		// return indexOfNextPlayerToMakeAMove;
+		// }
+		// return indexOfNextPlayerToMakeAMove++;
+		if (indexOfNextPlayerToMakeAMove == 0) {
+			indexOfNextPlayerToMakeAMove = 1;
+		} else {
 			indexOfNextPlayerToMakeAMove = 0;
-			return indexOfNextPlayerToMakeAMove;
 		}
-		return indexOfNextPlayerToMakeAMove++;
 	}
-	
 
 	public GameData getGameData() {
 		GameData result = new GameDataImpl();
@@ -235,17 +236,65 @@ public class Game {
 		result.setPlayersNumber(playersNumber);
 		result.setStatus(status);
 		result.setGameBoard(gameBoard);
-		for(Player player : players){
+		result.setNextPlayer(nextMovePlayer);
+		for (Player player : players) {
 			PlayerData playerData = player.getPlayerData();
 			result.addPlayer(playerData);
 		}
-		
+
 		return result;
 	}
 
 	public static GameIdGenerator getGameIdGenerator() {
 		return gameIdGenerator;
 	}
-	
+
+	public void makeMove(String gameId, String playerId, Position position) {
+		if (notValidGameId(gameId) || notValidPlayerId(playerId)) {
+			throw new RuntimeException("wrong game id or player id");
+		}
+		if (isOccupied(position)) {
+			throw new RuntimeException("can`t make move position is occupied");
+		}
+
+		List<Position> positions = gameBoard.getPositions();
+		int index = positions.indexOf(position);
+		markPositionAt(index, playerId);
+		getNextIndex(players.size());
+		getNextMovePlayer();
+		informSubscribedPlayers();
+	}
+
+	private void getNextMovePlayer() {
+		nextMovePlayer = players.get(indexOfNextPlayerToMakeAMove);
+	}
+
+	private void markPositionAt(int index, String playerId) {
+		List<Position> positions = gameBoard.getPositions();
+		positions.get(index).setMark(playerId);
+	}
+
+	private boolean isOccupied(Position position) {
+		List<Position> positions = gameBoard.getPositions();
+		int index = positions.indexOf(position);
+		if (positions.get(index).getMark() != null) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean notValidPlayerId(String playerId) {
+		boolean result = true;
+		for (Player player : players) {
+			if (player.getPlayerData().getPlayerId().equals(playerId)) {
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	private boolean notValidGameId(String gameId) {
+		return id != gameId;
+	}
 
 }

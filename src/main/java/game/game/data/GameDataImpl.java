@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import game.game.data.board.GameBoard;
+import game.game.player.Player;
 import game.game.player.data.PlayerData;
 
 public class GameDataImpl implements GameData {
@@ -13,6 +14,7 @@ public class GameDataImpl implements GameData {
 	String status;
 	List<PlayerData> playerDataList;
 	GameBoard gameBoard;
+	PlayerData nextPlayer;
 	
 	public GameDataImpl() {
 		playerDataList = new ArrayList<>();
@@ -66,6 +68,16 @@ public class GameDataImpl implements GameData {
 	@Override
 	public void setGameBoard(GameBoard gameBoard) {
 		this.gameBoard = gameBoard;
+	}
+
+	@Override
+	public PlayerData getNextPlayer() {
+		return nextPlayer;
+	}
+
+	@Override
+	public void setNextPlayer(Player nextMovePlayer) {
+		nextPlayer = nextMovePlayer.getPlayerData();
 	}
 
 }
