@@ -23,6 +23,7 @@ import game.game.repository.GameRepository;
 import game.game.repository.GameRepositoryImpl;
 import game.game.responses.GameStatusResult;
 import game.game.responses.NewGameResponse;
+import game.game.responses.NewPlayerRegisteredResult;
 import game.game.services.PlayerService;
 import game.game.services.PlayerServiceImpl;
 import game.game.services.UserService;
@@ -127,7 +128,39 @@ public class PlayerServiceTest {
 		showGameState(playerId, gameStatus);
 	}
 	
-	
+	@Test
+	public void simulateGameHumanHuman() {
+		prepareBlueprint(0, 2);
+		NewGameResponse response = userService.createGame(blueprint);
+		String id = response.gameId;
+		String firstPlayerId = response.playerId;
+		GameStatusResult gameStatus = playerService.getGameStatus(id);
+		assertNotNull(gameStatus);
+		assertEquals(gameStatus.gameId, "1");
+		assertEquals(gameStatus.gameData.getStatus(), "BUILDING");
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerName("Vasya");
+		playerData.setPlayerType(PlayerType.HUMAN);
+		NewPlayerRegisteredResult newPlayerRegistered = 
+				userService.registerNewPlayer(id, playerData);
+		String secondPlayerId = newPlayerRegistered.playerId;
+		gameStatus = playerService.getGameStatus(id);
+		assertEquals(gameStatus.gameId, "1");
+		assertEquals(gameStatus.gameData.getStatus(), "PLAYING");
+		showGameState(firstPlayerId, gameStatus);
+		
+		String playerId = null;
+		Scanner sc = new Scanner(System.in);
+		for (int i = 0; i < 8; i++) {
+			int playerIdInt = sc.nextInt();
+			playerId = String.valueOf(playerIdInt);
+			int x = sc.nextInt();
+			int y = sc.nextInt();
+			gameStatus = playerService.makeMove(id, playerId, new Position(x, y));
+			showGameState(playerId, gameStatus);
+		}
+		showGameState(playerId, gameStatus);
+	}
 
 	private void showGameState(String playerId, GameStatusResult gameStatus) {
 		System.out.println("game id: " + gameStatus.gameId);
