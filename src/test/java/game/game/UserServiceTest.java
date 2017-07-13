@@ -82,6 +82,7 @@ public class UserServiceTest {
 		assertTrue(isequal(response, expectedGameResponse));
 		GameData gameData = response.gameData;
 		print(gameData.getGameBoard().getPositions());
+		System.out.println(gameData.getNextPlayer().getPlayerName());
 	}
 
 	private void print(List<Position> positions) {
@@ -132,6 +133,7 @@ public class UserServiceTest {
 		NewGameResponse expectedResponse = prepareExpectedResponse("BUILDING");
 		expectedResponse.gameData.setStatus("BUILDING");
 		assertTrue(isequal(response, expectedResponse));
+		
 	}
 
 	@Test
@@ -153,6 +155,9 @@ public class UserServiceTest {
 		GameStatusResult gameStatusResult = playerService.getGameStatus(id);
 		assertEquals(gameStatusResult.gameId, "1");
 		assertEquals(gameStatusResult.gameData.getStatus(), "PLAYING");
+		GameData gameData = gameStatusResult.gameData;
+		print(gameData.getGameBoard().getPositions());
+		System.out.println(gameData.getNextPlayer().getPlayerName());
 	}
 
 	@Test(expected = RuntimeException.class)
