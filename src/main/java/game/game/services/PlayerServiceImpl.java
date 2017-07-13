@@ -3,6 +3,7 @@ package game.game.services;
 import game.game.Game;
 import game.game.builder.GameBuilder;
 import game.game.builder.repository.GameBuilderRepository;
+import game.game.data.board.position.Position;
 import game.game.repository.GameRepository;
 import game.game.responses.GameStatusResult;
 
@@ -34,6 +35,12 @@ public class PlayerServiceImpl implements PlayerService {
 			result.gameId = result.gameData.getId();
 		}
 		return result;
+	}
+
+	@Override
+	public GameStatusResult makeMove(String id, String playerId, Position position) {
+		activeGamesRepository.findById(id).makeMove(id, playerId, position);
+		return getGameStatus(id);
 	}
 
 }

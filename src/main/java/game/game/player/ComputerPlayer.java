@@ -51,6 +51,9 @@ public class ComputerPlayer extends AbstractPlayer {
 	public void statusChanged() {
 		super.statusChanged();
 		GameData gameData = game.getGameData();
+		if(gameData.getStatus().equals("FINISHED")){
+			return;
+		}
 		if(gameData.getNextPlayer().getPlayerId().equals(playerId)){
 			GameBoard gameBoard = gameData.getGameBoard();
 			List<Position> positions = gameBoard.getPositions();

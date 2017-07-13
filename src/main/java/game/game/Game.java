@@ -76,44 +76,44 @@ public class Game {
 		
 		private void fillWinningPositions(Game game) {
 			WinningCombination winningPosition = new WinningCombination();
+			winningPosition.add(new Position(0, 0));
+			winningPosition.add(new Position(0, 1));
+			winningPosition.add(new Position(0, 2));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 0));
 			winningPosition.add(new Position(1, 1));
 			winningPosition.add(new Position(1, 2));
-			winningPosition.add(new Position(1, 3));
 			game.winningCombinations.add(winningPosition);
 			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(2, 0));
 			winningPosition.add(new Position(2, 1));
 			winningPosition.add(new Position(2, 2));
-			winningPosition.add(new Position(2, 3));
 			game.winningCombinations.add(winningPosition);
 			winningPosition = new WinningCombination();
-			winningPosition.add(new Position(3, 1));
-			winningPosition.add(new Position(3, 2));
-			winningPosition.add(new Position(3, 3));
+			winningPosition.add(new Position(0, 0));
+			winningPosition.add(new Position(1, 0));
+			winningPosition.add(new Position(2, 0));
 			game.winningCombinations.add(winningPosition);
 			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(0, 1));
 			winningPosition.add(new Position(1, 1));
 			winningPosition.add(new Position(2, 1));
-			winningPosition.add(new Position(3, 1));
 			game.winningCombinations.add(winningPosition);
 			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(0, 2));
 			winningPosition.add(new Position(1, 2));
 			winningPosition.add(new Position(2, 2));
-			winningPosition.add(new Position(3, 2));
 			game.winningCombinations.add(winningPosition);
 			winningPosition = new WinningCombination();
-			winningPosition.add(new Position(1, 3));
-			winningPosition.add(new Position(2, 3));
-			winningPosition.add(new Position(3, 3));
-			game.winningCombinations.add(winningPosition);
-			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(0, 0));
 			winningPosition.add(new Position(1, 1));
 			winningPosition.add(new Position(2, 2));
-			winningPosition.add(new Position(3, 3));
 			game.winningCombinations.add(winningPosition);
 			winningPosition = new WinningCombination();
-			winningPosition.add(new Position(1, 3));
-			winningPosition.add(new Position(2, 2));
-			winningPosition.add(new Position(3, 1));
+			winningPosition.add(new Position(0, 2));
+			winningPosition.add(new Position(1, 1));
+			winningPosition.add(new Position(2, 0));
 			game.winningCombinations.add(winningPosition);
 		}
 
@@ -319,8 +319,10 @@ public class Game {
 		for(WinningCombination combination : winningCombinations){
 			boolean isWinning = true;
 			for(Position position : combination.positions){
-				if(position.getMark() != null){
-					if(!(position.getMark().equals(playerId))){
+				int index = gameBoard.getPositions().indexOf(position);
+				Position positionOnBoard = gameBoard.getPositions().get(index);
+				if(positionOnBoard.getMark() != null){
+					if(!(positionOnBoard.getMark().equals(playerId))){
 						isWinning = false;
 					}
 				}else{
