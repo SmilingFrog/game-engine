@@ -17,6 +17,7 @@ import game.game.blueprint.GameBlueprint;
 import game.game.blueprint.GameBlueprintImpl;
 import game.game.builder.repository.GameBuilderRepository;
 import game.game.builder.repository.GameBuilderRepositoryImpl;
+import game.game.data.GameData;
 import game.game.data.GameDataImpl;
 import game.game.data.board.GameBoard;
 import game.game.data.board.position.Position;
@@ -79,6 +80,27 @@ public class UserServiceTest {
 		NewGameResponse response = userService.createGame(blueprint);
 		NewGameResponse expectedGameResponse = prepareExpectedResponse("PLAYING");
 		assertTrue(isequal(response, expectedGameResponse));
+		GameData gameData = response.gameData;
+		print(gameData.getGameBoard().getPositions());
+	}
+
+	private void print(List<Position> positions) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				int index = positions.indexOf(new Position(i, j));
+				Position position = positions.get(index);
+				String mark = " ";
+				if (position.getMark() != null) {
+					mark = position.getMark(); 
+				}
+				sb.append("[");
+				sb.append(mark);
+				sb.append("]");
+			}
+			sb.append("\n");
+		}
+		System.out.println(sb.toString());
 	}
 
 	public void prepareBlueprint(int numberOfComputerPlayers, int numberOfHumanPlayers) {
@@ -170,8 +192,8 @@ public class UserServiceTest {
 	private boolean isequal(NewGameResponse response, NewGameResponse expectedResponse) {
 		boolean result = response.gameId.equals(expectedResponse.gameId)
 				&& response.gameData.getStatus().equals(expectedResponse.gameData.getStatus());
-		if(response.gameData.getStatus().equals(expectedResponse.gameData.getStatus()) &&
-				expectedResponse.gameData.getStatus().equals("PLAYING")){
+		if (response.gameData.getStatus().equals(expectedResponse.gameData.getStatus())
+				&& expectedResponse.gameData.getStatus().equals("PLAYING")) {
 			boolean isGameBoardEqual = response.gameData.getGameBoard() != null;
 			isGameBoardEqual = isGameBoardEqual && response.gameData.getGameBoard().getX() == 3;
 			isGameBoardEqual = isGameBoardEqual && response.gameData.getGameBoard().getY() == 3;
