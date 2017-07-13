@@ -30,6 +30,8 @@ public class Game {
 	String status;
 	Player nextMovePlayer;
 	List<Player> subscribedPlayers = null;
+	String winnerId;
+	List<WinningCombination> winningCombinations;
 
 	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
 
@@ -64,10 +66,54 @@ public class Game {
 			game.status = "PLAYING";
 			game.id = this.getId();
 			createGameBoard(game);
+			fillWinningPositions(game);
 			injectGameIntoAllComputerPlayers(game);
 			subscribePlayers(game);
 			game.start();
 			return game;
+		}
+		
+		private void fillWinningPositions(Game game) {
+			WinningCombination winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 1));
+			winningPosition.add(new Position(1, 2));
+			winningPosition.add(new Position(1, 3));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(2, 1));
+			winningPosition.add(new Position(2, 2));
+			winningPosition.add(new Position(2, 3));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(3, 1));
+			winningPosition.add(new Position(3, 2));
+			winningPosition.add(new Position(3, 3));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 1));
+			winningPosition.add(new Position(2, 1));
+			winningPosition.add(new Position(3, 1));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 2));
+			winningPosition.add(new Position(2, 2));
+			winningPosition.add(new Position(3, 2));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 3));
+			winningPosition.add(new Position(2, 3));
+			winningPosition.add(new Position(3, 3));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 1));
+			winningPosition.add(new Position(2, 2));
+			winningPosition.add(new Position(3, 3));
+			game.winningCombinations.add(winningPosition);
+			winningPosition = new WinningCombination();
+			winningPosition.add(new Position(1, 3));
+			winningPosition.add(new Position(2, 2));
+			winningPosition.add(new Position(3, 1));
+			game.winningCombinations.add(winningPosition);
 		}
 
 		private void injectGameIntoAllComputerPlayers(Game game) {
@@ -218,11 +264,6 @@ public class Game {
 	private static int indexOfNextPlayerToMakeAMove = 0;
 
 	private static void getNextIndex(int size) {
-		// if(indexOfNextPlayerToMakeAMove >= size){
-		// indexOfNextPlayerToMakeAMove = 0;
-		// return indexOfNextPlayerToMakeAMove;
-		// }
-		// return indexOfNextPlayerToMakeAMove++;
 		if (indexOfNextPlayerToMakeAMove == 0) {
 			indexOfNextPlayerToMakeAMove = 1;
 		} else {
@@ -237,6 +278,7 @@ public class Game {
 		result.setStatus(status);
 		result.setGameBoard(gameBoard);
 		result.setNextPlayer(nextMovePlayer);
+		result.setWinnerId(winnerId);
 		for (Player player : players) {
 			PlayerData playerData = player.getPlayerData();
 			result.addPlayer(playerData);
@@ -256,13 +298,39 @@ public class Game {
 		if (isOccupied(position)) {
 			throw new RuntimeException("can`t make move position is occupied");
 		}
+		if(status.equals("FINISHED")){
+			throw new RuntimeException("the game is OVER");
+		}
 
 		List<Position> positions = gameBoard.getPositions();
 		int index = positions.indexOf(position);
 		markPositionAt(index, playerId);
+		if(isWinningCombination(playerId)){
+			winnerId = playerId;
+			status = "FINISHED";
+		}
 		getNextIndex(players.size());
 		getNextMovePlayer();
 		informSubscribedPlayers();
+	}
+
+	private boolean isWinningCombination(String playerId) {
+		for(WinningCombination combination : winningCombinations){
+			boolean isWinning = true;
+			for(Position position : combination.positions){
+				if(position.getMark() != null){
+					if(!(position.getMark().equals(playerId))){
+						isWinning = false;
+					}
+				}else{
+					isWinning = false;
+				}
+			}
+			if(isWinning == true){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void getNextMovePlayer() {

@@ -33,4 +33,6 @@ public interface GameData {
 
 	void setNextPlayer(Player nextMovePlayer);
 
+	void setWinnerId(String winnerId);
+
 }

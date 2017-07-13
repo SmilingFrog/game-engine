@@ -15,6 +15,7 @@ public class GameDataImpl implements GameData {
 	List<PlayerData> playerDataList;
 	GameBoard gameBoard;
 	PlayerData nextPlayer;
+	String winnerId;
 	
 	public GameDataImpl() {
 		playerDataList = new ArrayList<>();
@@ -78,6 +79,11 @@ public class GameDataImpl implements GameData {
 	@Override
 	public void setNextPlayer(Player nextMovePlayer) {
 		nextPlayer = nextMovePlayer.getPlayerData();
+	}
+
+	@Override
+	public void setWinnerId(String winnerId) {
+		this.winnerId=winnerId;
 	}
 
 }
