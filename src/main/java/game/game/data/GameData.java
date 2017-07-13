@@ -35,4 +35,6 @@ public interface GameData {
 
 	void setWinnerId(String winnerId);
 
+	String getWinnerId();
+
 }

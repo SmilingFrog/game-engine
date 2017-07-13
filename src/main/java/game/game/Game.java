@@ -37,6 +37,7 @@ public class Game {
 
 	private Game() {
 		subscribedPlayers = new ArrayList<>();
+		winningCombinations = new ArrayList<>();
 	}
 
 	private static class InnerGameBuilder implements GameBuilder {

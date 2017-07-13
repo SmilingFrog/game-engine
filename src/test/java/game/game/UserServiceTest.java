@@ -83,6 +83,7 @@ public class UserServiceTest {
 		GameData gameData = response.gameData;
 		print(gameData.getGameBoard().getPositions());
 		System.out.println(gameData.getNextPlayer().getPlayerName());
+		System.out.println(gameData.getWinnerId());
 	}
 
 	private void print(List<Position> positions) {

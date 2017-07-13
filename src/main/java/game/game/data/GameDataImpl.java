@@ -86,4 +86,9 @@ public class GameDataImpl implements GameData {
 		this.winnerId=winnerId;
 	}
 
+	@Override
+	public String getWinnerId() {
+		return winnerId;
+	}
+
 }
