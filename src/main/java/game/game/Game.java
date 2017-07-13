@@ -302,6 +302,9 @@ public class Game {
 		if(status.equals("FINISHED")){
 			throw new RuntimeException("the game is OVER");
 		}
+		if(!(playerId.equals(nextMovePlayer.getPlayerData().getPlayerId()))){
+			throw new RuntimeException("not your turn to make a move !");
+		}
 
 		List<Position> positions = gameBoard.getPositions();
 		int index = positions.indexOf(position);
