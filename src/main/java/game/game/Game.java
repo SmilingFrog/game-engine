@@ -321,20 +321,20 @@ public class Game {
 			throw new WrongGameIdException("wrong game id");
 		}
 		if(notValidPlayerId(playerId)){
-			
+			throw new WrongPlayerIdException("wrong player id");
 		}
 		if(isTimeOut(this.lastActivityTime)){
 			this.status = "TIME IS OUT";
 			throw new TimeOutException("Can`t make a move. The game`s time is out.");
 		}
 		if (isOccupied(position)) {
-			throw new RuntimeException("can`t make move position is occupied");
+			throw new PositionIsOccupiedException("can`t make move position is occupied");
 		}
 		if (status.equals("FINISHED")) {
-			throw new RuntimeException("the game is OVER");
+			throw new TheGameIsOverException("the game is OVER");
 		}
 		if (!(playerId.equals(nextMovePlayer.getPlayerData().getPlayerId()))) {
-			throw new RuntimeException("not your turn to make a move !");
+			throw new NotYourTurnException("not your turn to make a move !");
 		}
 
 		List<Position> positions = gameBoard.getPositions();

@@ -29,6 +29,7 @@ import game.game.repository.GameRepositoryImpl;
 import game.game.responses.GameStatusResult;
 import game.game.responses.NewGameResponse;
 import game.game.responses.NewPlayerRegisteredResult;
+import game.game.services.NoNewPlayersException;
 import game.game.services.PlayerService;
 import game.game.services.PlayerServiceImpl;
 import game.game.services.UserService;
@@ -195,7 +196,7 @@ public class UserServiceTest {
 		NewPlayerRegisteredResult gameStatus = userService.registerNewPlayer(id, playerData);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test(expected = NoNewPlayersException.class)
 	public void whenTryingToRegisterNewUserToTheGameThatHasAlreadyStartedThrowException() {
 		int computerPlayers = 1;
 		int humanPlayers = 1;

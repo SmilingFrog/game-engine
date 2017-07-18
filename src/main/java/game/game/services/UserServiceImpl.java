@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 		GameBuilder gameBuilder = activeGameBuilderRepository.findById(id);
 		Game game = activeGamesRepository.findById(id);
 		if (theGameHasAlreadyStarted(gameBuilder, game)) {
-			throw new RuntimeException("Can not register new player. The Game has already started!");
+			throw new NoNewPlayersException("Can not register new player. The Game has already started!");
 		}else if(isWrongId(id)){
 			throw new WrongIdException("There is no game with the id: " + id);
 		}
