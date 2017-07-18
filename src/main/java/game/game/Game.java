@@ -80,6 +80,7 @@ public class Game {
 			game.playersNumber = this.playersNumber;
 			game.status = "PLAYING";
 			game.id = this.getId();
+			game.lastActivityTime = this.lastActivityTime;
 		}
 
 		private void fillWinningPositions(Game game) {
@@ -246,7 +247,7 @@ public class Game {
 			String playerId = null;
 			long currentTime = System.currentTimeMillis();
 			long timeDifference = currentTime - this.lastActivityTime;
-			if((timeDifference/1000) >= GameSettings.maximumInactiveSeconds){
+			if(isTimeOut(this.lastActivityTime)){
 				System.out.println(timeDifference/1000);
 				throw new TimeOutException("Can`t register new Player. The time is out.");
 			}
@@ -320,6 +321,9 @@ public class Game {
 		if (notValidGameId(gameId) || notValidPlayerId(playerId)) {
 			throw new RuntimeException("wrong game id or player id");
 		}
+		if(isTimeOut(this.lastActivityTime)){
+			
+		}
 		if (isOccupied(position)) {
 			throw new RuntimeException("can`t make move position is occupied");
 		}
@@ -340,6 +344,12 @@ public class Game {
 		getNextIndex(players.size());
 		getNextMovePlayer();
 		informSubscribedPlayers();
+	}
+
+	private static boolean isTimeOut(long lastActivityTime) {
+		long currentTime = System.currentTimeMillis();
+		long timeDifference = currentTime - lastActivityTime;
+		return (timeDifference/1000) >= GameSettings.maximumInactiveSeconds;
 	}
 
 	private boolean isWinningCombination(String playerId) {

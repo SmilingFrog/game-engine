@@ -94,7 +94,7 @@ public class UserServiceTest {
 				Position position = positions.get(index);
 				String mark = " ";
 				if (position.getMark() != null) {
-					mark = position.getMark(); 
+					mark = position.getMark();
 				}
 				sb.append("[");
 				sb.append(mark);
@@ -134,7 +134,7 @@ public class UserServiceTest {
 		NewGameResponse expectedResponse = prepareExpectedResponse("BUILDING");
 		expectedResponse.gameData.setStatus("BUILDING");
 		assertTrue(isequal(response, expectedResponse));
-		
+
 	}
 
 	@Test
@@ -160,9 +160,9 @@ public class UserServiceTest {
 		print(gameData.getGameBoard().getPositions());
 		System.out.println(gameData.getNextPlayer().getPlayerName());
 	}
-	
-	@Test(expected=TimeOutException.class)
-	public void givenTimeHasRunOutAndTryingToRegisterNewPlayerThrowException(){
+
+	@Test(expected = TimeOutException.class)
+	public void givenTimeHasRunOutAndTryingToRegisterNewPlayerThrowException() {
 		int computerPlayers = 1;
 		int humanPlayers = 2;
 		prepareBlueprint(computerPlayers, humanPlayers);
@@ -174,15 +174,25 @@ public class UserServiceTest {
 		PlayerData playerData = new PlayerDataImpl();
 		playerData.setPlayerName("Vasya");
 		playerData.setPlayerType(PlayerType.HUMAN);
-	
+
 		try {
-			Thread.currentThread().sleep(Game.GameSettings.maximumInactiveSeconds*1000);
+			Thread.currentThread().sleep(Game.GameSettings.maximumInactiveSeconds * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		};
-		
+		}
+		;
+
 		NewPlayerRegisteredResult gameStatus = userService.registerNewPlayer(id, playerData);
-		
+
+	}
+
+	@Test(expected=WrongIdException.class)
+	public void whenRegisterNewPlayerForTheGameThatDoesNotExistAndIsNotBuildingThrowException() {
+		String id = "6";
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerName("Vasya");
+		playerData.setPlayerType(PlayerType.HUMAN);
+		NewPlayerRegisteredResult gameStatus = userService.registerNewPlayer(id, playerData);
 	}
 
 	@Test(expected = RuntimeException.class)

@@ -6,6 +6,7 @@ import javax.swing.plaf.basic.BasicMenuBarUI;
 
 import game.game.Game;
 import game.game.TimeOutException;
+import game.game.WrongIdException;
 import game.game.blueprint.GameBlueprint;
 import game.game.builder.GameBuilder;
 import game.game.builder.repository.GameBuilderRepository;
@@ -76,6 +77,8 @@ public class UserServiceImpl implements UserService {
 		Game game = activeGamesRepository.findById(id);
 		if (theGameHasAlreadyStarted(gameBuilder, game)) {
 			throw new RuntimeException("Can not register new player. The Game has already started!");
+		}else if(isWrongId(id)){
+			throw new WrongIdException("There is no game with the id: " + id);
 		}
 		
 		try{
@@ -95,6 +98,12 @@ public class UserServiceImpl implements UserService {
 			result.gameData = gameBuilder.getGameData();
 		}
 		return result;
+	}
+
+	private boolean isWrongId(String id) {
+		GameBuilder gameBuilder = activeGameBuilderRepository.findById(id);
+		Game game = activeGamesRepository.findById(id);
+		return gameBuilder == null && game == null;
 	}
 
 	private boolean theGameHasAlreadyStarted(GameBuilder gameBuilder, Game game) {
