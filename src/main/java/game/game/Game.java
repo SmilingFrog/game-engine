@@ -233,6 +233,7 @@ public class Game {
 				PlayerData playerData = player.getPlayerData();
 				gameData.addPlayer(playerData);
 			}
+			this.lastActivityTime = System.currentTimeMillis();
 			return gameData;
 		}
 
@@ -309,7 +310,7 @@ public class Game {
 			PlayerData playerData = player.getPlayerData();
 			result.addPlayer(playerData);
 		}
-
+		this.lastActivityTime = System.currentTimeMillis();
 		return result;
 	}
 

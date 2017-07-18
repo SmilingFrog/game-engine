@@ -107,6 +107,7 @@ public class PlayerServiceTest {
 		blueprint.addPlayer(playerData);
 	}
 
+	@Ignore
 	@Test
 	public void canMakeMove() {
 		prepareBlueprint(1, 1);
