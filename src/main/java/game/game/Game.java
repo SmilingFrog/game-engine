@@ -21,6 +21,7 @@ public class Game {
 	static class GameSettings {
 		static int defaultXDimension = 3;
 		static int defaultYDimension = 3;
+		static int maximumInactiveSeconds = 30;
 	}
 
 	GameBoard gameBoard;
@@ -33,6 +34,7 @@ public class Game {
 	String winnerId;
 	List<WinningCombination> winningCombinations;
 	private static int indexOfNextPlayerToMakeAMove = 0;
+	long lastActivityTime;
 
 	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
 
@@ -50,6 +52,7 @@ public class Game {
 		String status;
 		GameIdGenerator idGenerator;
 		PlayerIdGenerator playerIdGenerator;
+		long lastActivityTime;
 
 		public InnerGameBuilder() {
 			players = new ArrayList<>();
@@ -78,7 +81,7 @@ public class Game {
 			game.status = "PLAYING";
 			game.id = this.getId();
 		}
-		
+
 		private void fillWinningPositions(Game game) {
 			WinningCombination winningPosition = new WinningCombination();
 			winningPosition.add(new Position(0, 0));
@@ -162,6 +165,7 @@ public class Game {
 				((ComputerPlayer) player).setGameId(id);
 			}
 			this.players.add(player);
+			this.lastActivityTime = System.currentTimeMillis();
 		}
 
 		private boolean isComputerPlayer(PlayerData playerData) {
@@ -196,7 +200,7 @@ public class Game {
 				PlayerData playerData = player.getPlayerData();
 				String playerId = playerData.getPlayerId();
 				if (playerId == null) {
-					return false; 
+					return false;
 				}
 			}
 
@@ -240,6 +244,12 @@ public class Game {
 		@Override
 		public String registerPlayer(PlayerData playerToRegister) {
 			String playerId = null;
+			long currentTime = System.currentTimeMillis();
+			long timeDifference = currentTime - this.lastActivityTime;
+			if((timeDifference/1000) >= GameSettings.maximumInactiveSeconds){
+				System.out.println(timeDifference/1000);
+				throw new TimeOutException("Can`t register new Player. The time is out.");
+			}
 			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
 				if (isHumanPlayer(playerData) && playerData.getPlayerId() == null) {
@@ -313,17 +323,17 @@ public class Game {
 		if (isOccupied(position)) {
 			throw new RuntimeException("can`t make move position is occupied");
 		}
-		if(status.equals("FINISHED")){
+		if (status.equals("FINISHED")) {
 			throw new RuntimeException("the game is OVER");
 		}
-		if(!(playerId.equals(nextMovePlayer.getPlayerData().getPlayerId()))){
+		if (!(playerId.equals(nextMovePlayer.getPlayerData().getPlayerId()))) {
 			throw new RuntimeException("not your turn to make a move !");
 		}
 
 		List<Position> positions = gameBoard.getPositions();
 		int index = positions.indexOf(position);
 		markPositionAt(index, playerId);
-		if(isWinningCombination(playerId)){
+		if (isWinningCombination(playerId)) {
 			winnerId = playerId;
 			status = "FINISHED";
 		}
@@ -333,20 +343,20 @@ public class Game {
 	}
 
 	private boolean isWinningCombination(String playerId) {
-		for(WinningCombination combination : winningCombinations){
+		for (WinningCombination combination : winningCombinations) {
 			boolean isWinning = true;
-			for(Position position : combination.positions){
+			for (Position position : combination.positions) {
 				int index = gameBoard.getPositions().indexOf(position);
 				Position positionOnBoard = gameBoard.getPositions().get(index);
-				if(positionOnBoard.getMark() != null){
-					if(!(positionOnBoard.getMark().equals(playerId))){
+				if (positionOnBoard.getMark() != null) {
+					if (!(positionOnBoard.getMark().equals(playerId))) {
 						isWinning = false;
 					}
-				}else{
+				} else {
 					isWinning = false;
 				}
 			}
-			if(isWinning == true){
+			if (isWinning == true) {
 				return true;
 			}
 		}

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.swing.plaf.basic.BasicMenuBarUI;
 
 import game.game.Game;
+import game.game.TimeOutException;
 import game.game.blueprint.GameBlueprint;
 import game.game.builder.GameBuilder;
 import game.game.builder.repository.GameBuilderRepository;
@@ -72,13 +73,21 @@ public class UserServiceImpl implements UserService {
 	public NewPlayerRegisteredResult registerNewPlayer(String id, PlayerData playerData) {
 		NewPlayerRegisteredResult result = new NewPlayerRegisteredResult();
 		GameBuilder gameBuilder = activeGameBuilderRepository.findById(id);
-		if (theGameHasAlreadyStarted(gameBuilder)) {
+		Game game = activeGamesRepository.findById(id);
+		if (theGameHasAlreadyStarted(gameBuilder, game)) {
 			throw new RuntimeException("Can not register new player. The Game has already started!");
 		}
+		
+		try{
 		result.playerId = gameBuilder.registerPlayer(playerData);
+		}catch(TimeOutException ex){
+			activeGameBuilderRepository.remove(gameBuilder);
+			throw ex;
+		}
+		
 		result.gameId = gameBuilder.getId();
 		if (gameBuilder.canCreateGame()) {
-			Game game = gameBuilder.build();
+			game = gameBuilder.build();
 			activeGamesRepository.add(game);
 			result.gameData = game.getGameData();
 			activeGameBuilderRepository.remove(gameBuilder);
@@ -88,8 +97,8 @@ public class UserServiceImpl implements UserService {
 		return result;
 	}
 
-	private boolean theGameHasAlreadyStarted(GameBuilder gameBuilder) {
-		return gameBuilder == null;
+	private boolean theGameHasAlreadyStarted(GameBuilder gameBuilder, Game game) {
+		return gameBuilder == null && game != null;
 	}
 
 }

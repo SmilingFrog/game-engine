@@ -10,5 +10,7 @@ public interface GameRepository {
 
 	int size();
 
+	void remove(Game game);
+
 
 }

@@ -28,4 +28,9 @@ public class GameRepositoryImpl implements GameRepository {
 		return games.size();
 	}
 
+	@Override
+	public void remove(Game game) {
+		games.remove(game);
+	}
+
 }

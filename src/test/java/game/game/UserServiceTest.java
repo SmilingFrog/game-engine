@@ -160,6 +160,30 @@ public class UserServiceTest {
 		print(gameData.getGameBoard().getPositions());
 		System.out.println(gameData.getNextPlayer().getPlayerName());
 	}
+	
+	@Test(expected=TimeOutException.class)
+	public void givenTimeHasRunOutAndTryingToRegisterNewPlayerThrowException(){
+		int computerPlayers = 1;
+		int humanPlayers = 2;
+		prepareBlueprint(computerPlayers, humanPlayers);
+		NewGameResponse response = userService.createGame(blueprint);
+		NewGameResponse expectedResponse = prepareExpectedResponse("BUILDING");
+		expectedResponse.gameData.setStatus("BUILDING");
+		assertTrue(isequal(response, expectedResponse));
+		String id = response.gameId;
+		PlayerData playerData = new PlayerDataImpl();
+		playerData.setPlayerName("Vasya");
+		playerData.setPlayerType(PlayerType.HUMAN);
+	
+		try {
+			Thread.currentThread().sleep(Game.GameSettings.maximumInactiveSeconds*1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		};
+		
+		NewPlayerRegisteredResult gameStatus = userService.registerNewPlayer(id, playerData);
+		
+	}
 
 	@Test(expected = RuntimeException.class)
 	public void whenTryingToRegisterNewUserToTheGameThatHasAlreadyStartedThrowException() {
