@@ -322,7 +322,7 @@ public class Game {
 			throw new RuntimeException("wrong game id or player id");
 		}
 		if(isTimeOut(this.lastActivityTime)){
-			
+			throw new TimeOutException("Can`t make a move. The game`s time is out.");
 		}
 		if (isOccupied(position)) {
 			throw new RuntimeException("can`t make move position is occupied");
