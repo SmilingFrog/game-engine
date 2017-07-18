@@ -246,10 +246,7 @@ public class Game {
 		@Override
 		public String registerPlayer(PlayerData playerToRegister) {
 			String playerId = null;
-			long currentTime = System.currentTimeMillis();
-			long timeDifference = currentTime - this.lastActivityTime;
 			if(isTimeOut(this.lastActivityTime)){
-				System.out.println(timeDifference/1000);
 				throw new TimeOutException("Can`t register new Player. The time is out.");
 			}
 			for (Player player : players) {
@@ -320,8 +317,11 @@ public class Game {
 
 	public void makeMove(String gameId, String playerId, Position position) {
 		
-		if (notValidGameId(gameId) || notValidPlayerId(playerId)) {
-			throw new RuntimeException("wrong game id or player id");
+		if (notValidGameId(gameId)) {
+			throw new WrongGameIdException("wrong game id");
+		}
+		if(notValidPlayerId(playerId)){
+			
 		}
 		if(isTimeOut(this.lastActivityTime)){
 			this.status = "TIME IS OUT";
