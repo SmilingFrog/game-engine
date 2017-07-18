@@ -15,5 +15,5 @@ public interface PlayerService {
 
 	GameStatusResult makeMove(String id, String playerId, Position position);
 
-
+	
 }

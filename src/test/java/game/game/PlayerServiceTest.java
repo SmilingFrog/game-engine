@@ -107,6 +107,7 @@ public class PlayerServiceTest {
 		blueprint.addPlayer(playerData);
 	}
 
+	@Ignore
 	@Test
 	public void canMakeMove() {
 		prepareBlueprint(1, 1);
@@ -128,6 +129,7 @@ public class PlayerServiceTest {
 		showGameState(playerId, gameStatus);
 	}
 	
+	@Ignore
 	@Test
 	public void simulateGameHumanHuman() {
 		prepareBlueprint(0, 2);

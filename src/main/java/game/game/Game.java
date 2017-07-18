@@ -32,6 +32,7 @@ public class Game {
 	List<Player> subscribedPlayers = null;
 	String winnerId;
 	List<WinningCombination> winningCombinations;
+	private static int indexOfNextPlayerToMakeAMove = 0;
 
 	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
 
@@ -62,16 +63,20 @@ public class Game {
 				throw new CantCreateGameException();
 			}
 			Game game = new Game();
-			game.players = this.players;
-			game.playersNumber = this.playersNumber;
-			game.status = "PLAYING";
-			game.id = this.getId();
+			fillGameParameters(game);
 			createGameBoard(game);
 			fillWinningPositions(game);
 			injectGameIntoAllComputerPlayers(game);
 			subscribePlayers(game);
 			game.start();
 			return game;
+		}
+
+		private void fillGameParameters(Game game) {
+			game.players = this.players;
+			game.playersNumber = this.playersNumber;
+			game.status = "PLAYING";
+			game.id = this.getId();
 		}
 		
 		private void fillWinningPositions(Game game) {
@@ -119,10 +124,14 @@ public class Game {
 
 		private void injectGameIntoAllComputerPlayers(Game game) {
 			for (Player player : game.players) {
-				if (player.getPlayerData().getPlayerType() == PlayerType.COMPUTER) {
+				if (isComputerPlayer(player)) {
 					((ComputerPlayer) player).setGame(game);
 				}
 			}
+		}
+
+		private boolean isComputerPlayer(Player player) {
+			return player.getPlayerData().getPlayerType() == PlayerType.COMPUTER;
 		}
 
 		private void createGameBoard(Game game) {
@@ -138,7 +147,7 @@ public class Game {
 
 		private void subscribePlayers(Game game) {
 			for (Player player : game.players) {
-				if (player.getPlayerData().getPlayerType() == PlayerType.COMPUTER) {
+				if (isComputerPlayer(player)) {
 					game.subscribedPlayers.add(player);
 				}
 			}
@@ -147,12 +156,16 @@ public class Game {
 		@Override
 		public void add(Player player) {
 			PlayerData playerData = player.getPlayerData();
-			if (playerData.getPlayerType().equals(PlayerType.COMPUTER)) {
+			if (isComputerPlayer(playerData)) {
 				String playerId = playerIdGenerator.generateId();
 				player.setPlayerId(playerId);
 				((ComputerPlayer) player).setGameId(id);
 			}
 			this.players.add(player);
+		}
+
+		private boolean isComputerPlayer(PlayerData playerData) {
+			return playerData.getPlayerType().equals(PlayerType.COMPUTER);
 		}
 
 		@Override
@@ -179,12 +192,11 @@ public class Game {
 
 		private boolean allPlayersHaveIds() {
 			boolean result = true;
-
 			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
 				String playerId = playerData.getPlayerId();
 				if (playerId == null) {
-					result = false;
+					return false; 
 				}
 			}
 
@@ -195,11 +207,15 @@ public class Game {
 			boolean result = false;
 			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
-				if (playerData.getPlayerType().equals(PlayerType.HUMAN)) {
+				if (isHumanPlayer(playerData)) {
 					result = true;
 				}
 			}
 			return result;
+		}
+
+		private boolean isHumanPlayer(PlayerData playerData) {
+			return playerData.getPlayerType().equals(PlayerType.HUMAN);
 		}
 
 		@Override
@@ -226,7 +242,7 @@ public class Game {
 			String playerId = null;
 			for (Player player : players) {
 				PlayerData playerData = player.getPlayerData();
-				if (playerData.getPlayerType().equals(PlayerType.HUMAN) && playerData.getPlayerId() == null) {
+				if (isHumanPlayer(playerData) && playerData.getPlayerId() == null) {
 					player.setPlayerName(playerToRegister.getPlayerName());
 					playerId = playerIdGenerator.generateId();
 					player.setPlayerId(playerId);
@@ -261,8 +277,6 @@ public class Game {
 			player.statusChanged();
 		}
 	}
-
-	private static int indexOfNextPlayerToMakeAMove = 0;
 
 	private static void getNextIndex(int size) {
 		if (indexOfNextPlayerToMakeAMove == 0) {
