@@ -43,6 +43,7 @@ public class PlayerServiceTest {
 
 	@Before
 	public void setup() {
+		Game.getGameIdGenerator().reset();
 		gameRepository = new GameRepositoryImpl();
 		gameBuilderRepository = new GameBuilderRepositoryImpl();
 		userService = new UserServiceImpl();
@@ -72,7 +73,6 @@ public class PlayerServiceTest {
 		assertNotNull(gameStatus);
 		assertEquals(gameStatus.gameId, "1");
 		assertEquals(gameStatus.gameData.getStatus(), "BUILDING");
-		Game.getGameIdGenerator().reset();
 	}
 
 	@Test
@@ -84,7 +84,6 @@ public class PlayerServiceTest {
 		assertNotNull(gameStatus);
 		assertEquals(gameStatus.gameId, "1");
 		assertEquals(gameStatus.gameData.getStatus(), "PLAYING");
-		Game.getGameIdGenerator().reset();
 	}
 
 	public void prepareBlueprint(int numberOfComputerPlayers, int numberOfHumanPlayers) {
