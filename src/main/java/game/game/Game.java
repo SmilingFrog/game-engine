@@ -34,7 +34,7 @@ public class Game {
 	String winnerId;
 	List<WinningCombination> winningCombinations;
 	private static int indexOfNextPlayerToMakeAMove = 0;
-	long lastActivityTime;
+	public long lastActivityTime;
 
 	private static GameIdGenerator gameIdGenerator = new GameIdGeneratorImpl();
 
@@ -318,10 +318,12 @@ public class Game {
 	}
 
 	public void makeMove(String gameId, String playerId, Position position) {
+		
 		if (notValidGameId(gameId) || notValidPlayerId(playerId)) {
 			throw new RuntimeException("wrong game id or player id");
 		}
 		if(isTimeOut(this.lastActivityTime)){
+			this.status = "TIME IS OUT";
 			throw new TimeOutException("Can`t make a move. The game`s time is out.");
 		}
 		if (isOccupied(position)) {
@@ -346,7 +348,7 @@ public class Game {
 		informSubscribedPlayers();
 	}
 
-	private static boolean isTimeOut(long lastActivityTime) {
+	public static boolean isTimeOut(long lastActivityTime) {
 		long currentTime = System.currentTimeMillis();
 		long timeDifference = currentTime - lastActivityTime;
 		return (timeDifference/1000) >= GameSettings.maximumInactiveSeconds;

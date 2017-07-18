@@ -1,5 +1,7 @@
 package game.game.repository;
 
+import java.util.List;
+
 import game.game.Game;
 
 public interface GameRepository {
@@ -11,6 +13,8 @@ public interface GameRepository {
 	int size();
 
 	void remove(Game game);
+
+	List<String> getAllIds();
 
 
 }

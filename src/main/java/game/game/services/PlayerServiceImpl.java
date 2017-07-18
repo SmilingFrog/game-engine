@@ -1,5 +1,8 @@
 package game.game.services;
 
+import java.util.List;
+import java.util.Random;
+
 import game.game.Game;
 import game.game.builder.GameBuilder;
 import game.game.builder.repository.GameBuilderRepository;
@@ -11,7 +14,7 @@ public class PlayerServiceImpl implements PlayerService {
 
 	GameRepository activeGamesRepository;
 	GameBuilderRepository activeGameBuilderRepository;
-	
+
 	@Override
 	public void setAcactiveGamesRepository(GameRepository gameRepository) {
 		activeGamesRepository = gameRepository;
@@ -24,12 +27,12 @@ public class PlayerServiceImpl implements PlayerService {
 
 	@Override
 	public GameStatusResult getGameStatus(String id) {
-		GameStatusResult result = new GameStatusResult(); 
-		GameBuilder	builder = activeGameBuilderRepository.findById(id);
-		if(builder != null){
+		GameStatusResult result = new GameStatusResult();
+		GameBuilder builder = activeGameBuilderRepository.findById(id);
+		if (builder != null) {
 			result.gameData = builder.getGameData();
 			result.gameId = result.gameData.getId();
-		}else{
+		} else {
 			Game game = activeGamesRepository.findById(id);
 			result.gameData = game.getGameData();
 			result.gameId = result.gameData.getId();
@@ -39,8 +42,20 @@ public class PlayerServiceImpl implements PlayerService {
 
 	@Override
 	public GameStatusResult makeMove(String id, String playerId, Position position) {
+		makeABitOfCleanUp();
 		activeGamesRepository.findById(id).makeMove(id, playerId, position);
 		return getGameStatus(id);
+	}
+
+	private void makeABitOfCleanUp() {
+		Random rnd = new Random();
+		List<String> gameIdList = activeGamesRepository.getAllIds();
+		int randomIndex = rnd.nextInt(gameIdList.size());
+		String randomId = gameIdList.get(randomIndex);
+		Game game = activeGamesRepository.findById(randomId);
+		if(game.isTimeOut(game.lastActivityTime)){
+			activeGamesRepository.remove(game);
+		}
 	}
 
 }
